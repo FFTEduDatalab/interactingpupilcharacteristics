@@ -36,10 +36,6 @@
 
 			svg.call(tip);		// invoke the tip in the context of viz
 
-			// d3.json("treeData.json", function(error, json) {
-	  		// 	draw(json);
-			// });
-
 			d3.json("treeDataflat_characteristics.json", function(error, json) {
 				var dataMap = json.reduce(function(map, node) {
 					map[node.name] = node;
@@ -75,8 +71,24 @@
 					.attr("class", "node")		// class set to _node_
 					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })	// positions each node according to values worked out by the d3 tree layout function
 
+				var colorLookup=[
+					(1, "rgb(230,0,126)"),
+					(2, "rgb(213,15,135)"),
+					(3, "rgb(196,31,144)"),
+					(4, "rgb(180,46,153)"),
+					(5, "rgb(163,62,162)"),
+					(6, "rgb(146,77,171)"),
+					(7, "rgb(129,93,180)"),
+					(8, "rgb(112,108,189)"),
+					(9, "rgb(95,124,198)"),
+					(10, "rgb(79,139,207)"),
+					(11, "rgb(62,155,216)"),
+					(12, "rgb(45,170,225)")
+				]
+
 				node.append("circle")		// add a circle in each node g we have added
 					.attr("r", function(d) { return d.value; })
+					.style("stroke", function(d) { return colorLookup[Math.floor(Math.random()*10+1)] })
 					.on('mouseover', tip.show)
 	      			.on('mouseout', tip.hide);
 
