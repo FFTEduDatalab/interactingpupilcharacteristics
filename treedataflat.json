@@ -1,0 +1,7 @@
+[
+{ "name" : "Top Level", "parent":"null", "value": 30},
+{ "name" : "Level 2: A", "parent":"Top Level", "value": 20},
+{ "name" : "Son of A", "parent":"Level 2: A", "value": 15},
+{ "name" : "Daughter of A", "parent":"Level 2: A", "value": 5},
+{ "name" : "Level 2: B", "parent":"Top Level","value": 10}
+]
