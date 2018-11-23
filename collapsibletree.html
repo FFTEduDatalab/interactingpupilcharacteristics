@@ -75,7 +75,10 @@
 				.attr("x", function(d) { return d.children || d._children ? (d.value + 4) * -1 : d.value + 4 })
 				.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
 				.attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-				.text(function(d) { return d.name; })
+				.text(function(d) {
+					if (d.depth<3){
+						return d.visible_name;
+					}})
 
 			// define function that adds each link that is required
 			var link=svg.selectAll("path.link")
