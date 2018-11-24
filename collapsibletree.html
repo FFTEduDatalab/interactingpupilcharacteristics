@@ -2,7 +2,6 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-	    <title>Collapsible Tree Example</title>
 	    <link href='styles.css' type='text/css' rel='stylesheet' media='screen,projection'/>
 	</head>
 	<body>
@@ -13,7 +12,23 @@
 				width=1000 - margin.right - margin.left,
 				height=800 - margin.top - margin.bottom;
 
-			var i=0;
+			var colorLookup=[
+				(1, "rgb(230,0,126)"),
+				(2, "rgb(213,15,135)"),
+				(3, "rgb(196,31,144)"),
+				(4, "rgb(180,46,153)"),
+				(5, "rgb(163,62,162)"),
+				(6, "rgb(146,77,171)"),
+				(7, "rgb(129,93,180)"),
+				(8, "rgb(112,108,189)"),
+				(9, "rgb(95,124,198)"),
+				(10, "rgb(79,139,207)"),
+				(11, "rgb(62,155,216)"),
+				(12, "rgb(45,170,225)")
+			]
+
+			var i=0,
+				root;
 
 			var tree=d3.layout.tree()
 				.size([width, height]);
@@ -24,7 +39,6 @@
 			var tip = d3.tip()		// initialise d3 tooltip
 				.attr('class', 'd3-tip')
 				.direction('ne')
-				// .offset([0, 10])		// top, left
 				.html(function(d) { return d.visible_name + "<br>" + d.value;})
 
 			var svg=d3.select("body")
@@ -54,45 +68,37 @@
 					}
 				});
 
-	  			draw(treeData[0]);
+				root=treeData[0]
+				root.x0=height/2;
+				root.y0=0;
+	  			draw(root);
 			});
 
-			function draw(json) {
-				var nodes=tree.nodes(json),		// define nodes using previously defined _tree_ function
+			d3.select(self.frameElement).style("height", "500px");
+
+			function draw(source) {
+				var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined _tree_ function
 					links=tree.links(nodes);		// define links based on newly defined nodes
 
 				nodes.forEach(function(d) { d.y=d.depth * 100; });		// set the horizontal depth of each node
 
 				//	define function that adds each node that is required
-				var node=svg.selectAll("g.node")		// no nodes exist, but this is required before enter()
-					.data(nodes, function(d) { return d.id || (d.id=++i); })		// cycle through each node that is required
-					.enter()		// joins data to elements
+				var node = svg.selectAll("g.node")
+  					.data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+				var nodeEnter=node.enter()		// joins data to elements
 					.append("g")		// appended as a group
 					.attr("class", "node")		// class set to _node_
-					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })	// positions each node according to values worked out by the d3 tree layout function
+					.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; })
+					.on("click", click);
 
-				var colorLookup=[
-					(1, "rgb(230,0,126)"),
-					(2, "rgb(213,15,135)"),
-					(3, "rgb(196,31,144)"),
-					(4, "rgb(180,46,153)"),
-					(5, "rgb(163,62,162)"),
-					(6, "rgb(146,77,171)"),
-					(7, "rgb(129,93,180)"),
-					(8, "rgb(112,108,189)"),
-					(9, "rgb(95,124,198)"),
-					(10, "rgb(79,139,207)"),
-					(11, "rgb(62,155,216)"),
-					(12, "rgb(45,170,225)")
-				]
-
-				node.append("circle")		// add a circle in each node g we have added
-					.attr("r", function(d) { return d.value; })
+				nodeEnter.append("circle")		// add a circle in each node g we have added
+					.attr("r", 1e-6)
 					.style("stroke", function(d) { return colorLookup[Math.floor(Math.random()*10+1)] })
 					.on('mouseover', tip.show)
 	      			.on('mouseout', tip.hide);
 
-				node.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
+				nodeEnter.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 					.attr("x", function(d) { return (d.value + 4) * -1 })
 					.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
 					.attr("text-anchor", "end")
@@ -100,15 +106,69 @@
 						if (d.depth<3){
 							return d.visible_name;
 						}})
+					.style("fill-opacity", 1e-6);
+
+				var nodeUpdate = node.transition()
+					.duration(750)
+					.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+				nodeUpdate.select("circle")
+					.attr("r", function(d) { return d.value; })
+
+				nodeUpdate.select("text")
+					.style("fill-opacity", 1);
+
+				var nodeExit = node.exit().transition()
+					.duration(750)
+					.attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
+					.remove();
+
+				nodeExit.select("circle")
+					.attr("r", 1e-6);
+
+				nodeExit.select("text")
+			  	  .style("fill-opacity", 1e-6);
 
 				// define function that adds each link that is required
-				var link=svg.selectAll("path.link")
-					.data(links, function(d) { return d.target.id; })
-					.enter()
-					.insert("path", "g")
+				var link = svg.selectAll("path.link")
+					.data(links, function(d) { return d.target.id; });
+
+				link.enter().insert("path", "g")
 					.attr("class", "link")
+					.attr("d", function(d) {
+					var o = {x: source.x0, y: source.y0};
+						return diagonal({source: o, target: o});
+					});
+
+				link.transition()
+					.duration(750)
 					.attr("d", diagonal);
-			}
+
+				link.exit().transition()
+					.duration(750)
+					.attr("d", function(d) {
+						var o = {x: source.x, y: source.y};
+						return diagonal({source: o, target: o});
+					})
+					.remove();
+
+				nodes.forEach(function(d) {		// preserve the old positions for transition.
+					d.x0 = d.x;
+					d.y0 = d.y;
+				});
+
+		};
+
+		function click(d) {
+			if (d.children) {
+				d._children = d.children;		// d._children is a temp variable to hold d.children value
+				d.children = null;
+			} else {
+				d.children = d._children;
+				d._children = null;		// d._children is a temp variable to hold d.children value
+				}
+			draw(d);
+		}
 		</script>
 
 	</body>
