@@ -17,7 +17,8 @@ var colorLookup=[
 	(12, "rgb(45,170,225)")
 ]
 
-var i=0,
+var loaded=0,
+	i=0,
 	duration=750,
 	root;
 
@@ -76,99 +77,112 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
 
-	//	define function that adds each node that is required
-	var node = svg.selectAll("g.node")
-		.data(nodes, function(d) { return d.id || (d.id = ++i); });
+	var node = svg.selectAll("g.node")		//	define function that adds each node that is required
+		.data(nodes, function(d) {return d.id || (d.id = ++i); });
 
-	var nodeEnter=node.enter()		// joins data to elements
+	var nodeStart=node.enter()		// joins data to elements
 		.append("g")		// appended as a group
 		.attr("class", "node")
-		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; })
-		.on("click", toggleDescendants);	// passes details of node to click function
+		.classed("nochild", function(d) {		// conditionally adds an additional class (.attr can't be used to add additional classes)
+			return !d.children && !d._children;		// see defn below
+		})
+		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; });		// current position of active node
 
-	nodeEnter.append("circle")		// add a circle in each node g we have added
+	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
 		.style("stroke", function(d) { return colorLookup[Math.floor(Math.random()*10+1)] })
 		.on('mouseover', tip.show)
 		.on('mouseout', tip.hide)
 		.on("click", toggleDescendants);	// passes details of node to click function
 
-	nodeEnter.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
-		.attr("x", function(d) { return (d.value + 4) * -1 })
-		.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
-		.attr("text-anchor", "end")
+	nodeStart.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.text(function(d) {
 			if (d.depth<3){
 				return d.visible_name;
 			}})
+		.attr("x", function(d) { return (d.value + 4) * -1 })
+		.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
+		.attr("text-anchor", "end")
 		.style("fill-opacity", 1e-6);
 
-	var nodeUpdate = node.transition()
-		.duration(duration)
-		.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	var nodePositioned = node.transition()
+		.duration(function() {
+			if (loaded==0) {
+				return 0;		// no transition on initial load
+			}
+			else {
+				return duration;
+			}
+		})
+		.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });		// new position of each node
 
-	nodeUpdate.select("circle")
+	nodePositioned.select("circle")
 		.attr("r", function(d) { return d.value; })
 		.attr("class", function(d) {
-			if (d._children) {		// d._children is temp variable used to hold d.children value
+			if (d._children) {		// see defn below
 				return "filled";
 			} else {
 				return "unfilled";
 			}
 		});
 
-	nodeUpdate.select("text")
+	nodePositioned.select("text")
 		.style("fill-opacity", 1);
 
-	var nodeExit = node.exit().transition()
+	var nodeRemoved = node.exit().transition()
 		.duration(duration)
-		.attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
+		.attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })		// new position of active node
 		.remove();
 
-	nodeExit.select("circle")
+	nodeRemoved.select("circle")
 		.attr("r", 1e-6);
 
-	nodeExit.select("text")
+	nodeRemoved.select("text")
 	  .style("fill-opacity", 1e-6);
 
-	// define function that adds each link that is required
-	var link = svg.selectAll("path.link")
+	var link = svg.selectAll("path.link")		// define function that adds each link that is required
 		.data(links, function(d) { return d.target.id; });
 
-	// Enter any new links at the parent's previous position.
-	link.enter().insert("path", "g")
+	link.enter()
+		.insert("path", "g")
 		.attr("class", "link")
 		.attr("d", function(d) {
-		var o = {x: source.x0, y: source.y0};
+			var o = {x: source.x0, y: source.y0};		// parent's current position
 			return diagonal({source: o, target: o});
 		});
 
-	// Transition links to their new position.
 	link.transition()
-		.duration(duration)
+		.duration(function() {
+			if (loaded==0) {
+				return 0;		// no transition on initial load
+			}
+			else {
+				return duration;
+			}
+		})
 		.attr("d", diagonal);
 
-	// Transition exiting nodes to the parent's new position.
 	link.exit().transition()
 		.duration(duration)
 		.attr("d", function(d) {
-			var o = {x: source.x, y: source.y};
+			var o = {x: source.x, y: source.y};		// parent's new position
 			return diagonal({source: o, target: o});
 		})
 		.remove();
 
-	nodes.forEach(function(d) {		// stash the old positions for transition.
+	nodes.forEach(function(d) {		// stash node current positions for transition
 		d.x0 = d.x;
 		d.y0 = d.y;
 	});
 
+	loaded=1
 };
 
 function toggleDescendants(d) {
 	if (d.children) {
 		collapseDescendants(d);
 	} else {
-		d.children = d._children;				// d._children is a temp variable to hold d.children value		// d._children is a temp variable to hold d.children value
+		d.children = d._children;				// d._children is a temp variable to hold d.children value when node is collapsed
 		d._children = null;
 	}
 	draw(d);
@@ -201,5 +215,5 @@ function expandDescendants(d) {
 
 function expandAll() {
 	expandDescendants(root);
-	draw(root);
+	draw(root);		// XXX: causing issue with transition where expand all button is used
 }
