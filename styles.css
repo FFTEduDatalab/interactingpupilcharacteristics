@@ -1,8 +1,3 @@
-/* circle.node {
-  stroke: #3182bd;
-  stroke-width: 1.5px;
-} */
-
 .link {
 	fill: none;
 	stroke: grey;
@@ -11,21 +6,26 @@
 
 .node circle {
 	cursor: pointer;
-	fill: #fff;
-	stroke: steelblue;
 	stroke-width: 3px;
+}
+
+.node circle.filled {
+	fill: grey;
+}
+
+.node circle.unfilled {
+	fill: white;
 }
 
 .node text {
 	font: 12px sans-serif;
-	/* fill:none; */
 }
 
 .d3-tip {
   line-height: 1;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  color: white;
   border-radius: 2px;
   pointer-events: none;
 }

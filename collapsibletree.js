@@ -42,6 +42,7 @@ var svg=d3.select("body")
 svg.call(tip);		// invoke the tip in the context of viz
 
 d3.json("treeDataflat_characteristics.json", function(error, json) {
+	// turn flat data into hierarchical data, required by tree
 	var dataMap = json.reduce(function(map, node) {
 		map[node.name] = node;
 		return map;
@@ -60,18 +61,20 @@ d3.json("treeDataflat_characteristics.json", function(error, json) {
 	});
 
 	root=treeData[0]
-	root.x0=height/2
-	root.y0=0
+
+	root.x0=height/2		// i.e. middle of the svg, taking into account svg margin
+	root.y0=0		// i.e. top of the svg, taking into account svg margin
+
 	draw(root);
 });
 
 d3.select(self.frameElement).style("height", "500px");
 
 function draw(source) {
-	var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined _tree_ function
-		links=tree.links(nodes);		// define links based on newly defined nodes
+	var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined tree function
+		links=tree.links(nodes);		// define links based on newly defined nodes using previously defined tree function
 
-	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set the horizontal depth of each node
+	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
 
 	//	define function that adds each node that is required
 	var node = svg.selectAll("g.node")
@@ -105,6 +108,13 @@ function draw(source) {
 
 	nodeUpdate.select("circle")
 		.attr("r", function(d) { return d.value; })
+		.attr("class", function(d) {
+			if (d._children) {		// d._children is temp variable used to hold d.children value
+				return "filled";
+			} else {
+				return "unfilled";
+			}
+		});
 
 	nodeUpdate.select("text")
 		.style("fill-opacity", 1);
@@ -124,6 +134,7 @@ function draw(source) {
 	var link = svg.selectAll("path.link")
 		.data(links, function(d) { return d.target.id; });
 
+	// Enter any new links at the parent's previous position.
 	link.enter().insert("path", "g")
 		.attr("class", "link")
 		.attr("d", function(d) {
@@ -131,10 +142,12 @@ function draw(source) {
 			return diagonal({source: o, target: o});
 		});
 
+	// Transition links to their new position.
 	link.transition()
 		.duration(duration)
 		.attr("d", diagonal);
 
+	// Transition exiting nodes to the parent's new position.
 	link.exit().transition()
 		.duration(duration)
 		.attr("d", function(d) {
@@ -143,20 +156,20 @@ function draw(source) {
 		})
 		.remove();
 
-	nodes.forEach(function(d) {		// preserve the old positions for transition.
+	nodes.forEach(function(d) {		// stash the old positions for transition.
 		d.x0 = d.x;
 		d.y0 = d.y;
 	});
-
 };
 
+// Toggle children on click.
 function click(d) {
-if (d.children) {
-	d._children = d.children;		// d._children is a temp variable to hold d.children value
-	d.children = null;
-} else {
-	d.children = d._children;
-	d._children = null;		// d._children is a temp variable to hold d.children value
-	}
-draw(d);
+	if (d.children) {
+		d._children = d.children;		// d._children is a temp variable to hold d.children value
+		d.children = null;
+	} else {
+		d.children = d._children;
+		d._children = null;
+		}
+	draw(d);
 }
