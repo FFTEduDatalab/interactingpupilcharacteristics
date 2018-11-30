@@ -70,7 +70,7 @@ d3.json("treeDataflat_characteristics.json", function(error, json) {
 
 d3.select(self.frameElement).style("height", "500px");
 
-function draw(source) {
+function draw(source) {		// function to draw nodes and links - either used on the entire dataset, or data relating to a particular node that has been clicked on
 	var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined tree function
 		links=tree.links(nodes);		// define links based on newly defined nodes using previously defined tree function
 
@@ -82,9 +82,9 @@ function draw(source) {
 
 	var nodeEnter=node.enter()		// joins data to elements
 		.append("g")		// appended as a group
-		.attr("class", "node")		// class set to _node_
+		.attr("class", "node")
 		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; })
-		.on("click", click);
+		.on("click", toggleDescendants);	// passes details of node to click function
 
 	nodeEnter.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
@@ -160,16 +160,45 @@ function draw(source) {
 		d.x0 = d.x;
 		d.y0 = d.y;
 	});
+
 };
 
-// Toggle children on click.
-function click(d) {
+function toggleDescendants(d) {
 	if (d.children) {
-		d._children = d.children;		// d._children is a temp variable to hold d.children value
-		d.children = null;
+		collapseDescendants(d);
 	} else {
+		d.children = d._children;				// d._children is a temp variable to hold d.children value		// d._children is a temp variable to hold d.children value
+		d._children = null;
+	}
+	draw(d);
+};
+
+function collapseDescendants(d) {
+	if (d.children) {
+		d.children.forEach(function(e){
+			collapseDescendants(e)
+		});
+		d._children = d.children;
+		d.children = null;
+	};
+}
+
+function expandDescendants(d) {
+	if (d.children) {
+		d.children.forEach(function(e){
+			expandDescendants(e)
+		});
+	}
+	else if (d._children) {
+		d._children.forEach(function(e){
+			expandDescendants(e)
+		});
 		d.children = d._children;
 		d._children = null;
-		}
-	draw(d);
+	};
+}
+
+function expandAll() {
+	expandDescendants(root);
+	draw(root);
 }
