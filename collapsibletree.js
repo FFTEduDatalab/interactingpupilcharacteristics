@@ -90,7 +90,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.attr("r", 1e-6)
 		.style("stroke", function(d) { return colorLookup[Math.floor(Math.random()*10+1)] })
 		.on('mouseover', tip.show)
-		.on('mouseout', tip.hide);
+		.on('mouseout', tip.hide)
+		.on("click", toggleDescendants);	// passes details of node to click function
 
 	nodeEnter.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.attr("x", function(d) { return (d.value + 4) * -1 })
