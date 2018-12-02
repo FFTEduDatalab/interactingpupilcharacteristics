@@ -78,10 +78,13 @@ loadDataset("ks2att")
 d3.select(self.frameElement).style("height", "500px");
 
 function draw(source) {		// function to draw nodes and links - either used on the entire dataset, or data relating to a particular node that has been clicked on
+
 	var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined tree function
 		links=tree.links(nodes);		// define links based on newly defined nodes using previously defined tree function
 
 	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
+
+	console.log(nodes)
 
 	var node = svg.selectAll("g.node")		//	define function that adds each node that is required
 		.data(nodes, function(d) {return d.id || (d.id = ++i); });
@@ -193,11 +196,6 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodes.forEach(function(d) {
 		d.x0 = d.x;		// stash current position of nodes for subsequent use
 		d.y0 = d.y;
-	});
-
-	nodes.forEach(function(d) {
-		d._children = d.children;
-		d.children = null;
 	});
 
 	loaded=1
