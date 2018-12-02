@@ -93,7 +93,6 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			return !d.children && !d._children;		// see defn below
 		})
 		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; });		// current position of active node
-		// .attr("transform", function(d) { console.log (d); return "translate(" + d.parent.x0 + "," + d.parent.y0 + ")"; });		// current position of active node
 
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
@@ -194,6 +193,11 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodes.forEach(function(d) {
 		d.x0 = d.x;		// stash current position of nodes for subsequent use
 		d.y0 = d.y;
+	});
+
+	nodes.forEach(function(d) {
+		d._children = d.children;
+		d.children = null;
 	});
 
 	loaded=1
