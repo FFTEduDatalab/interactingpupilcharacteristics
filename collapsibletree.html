@@ -5,9 +5,20 @@
 	    <link href='styles.css' type='text/css' rel='stylesheet' media='screen,projection'/>
 	</head>
 	<body>
+		<div class="switch-field">
+			<div class="switch-title">Select dataset:</div>
+			<input type="radio" id="switch_1" name="switch" value="ks2att" onchange="loadDataset(value)" checked/>
+			<label for="switch_1">KS2 attainment</label>
+			<input type="radio" id="switch_2" name="switch" value="ks2prog" onchange="loadDataset(value)"/>
+			<label for="switch_2">KS2 progress</label>
+			<input type="radio" id="switch_3" name="switch" value="ks4att" onchange="loadDataset(value)"/>
+			<label for="switch_3">KS4 attainment</label>
+			<input type="radio" id="switch_4" name="switch" value="ks4prog" onchange="loadDataset(value)"/>
+			<label for="switch_4">KS4 progress</label>
+		</div>
+		<button type="button" onclick="expandAll()">Expand all</button>
 		<script src='d3.v3/d3.v3.js'></script>
 		<script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 		<script src='collapsibletree.js'></script>
-		<button type="button" onclick="expandAll()">Expand all</button>
 	</body>
 </html>

@@ -21,7 +21,7 @@
 	cursor: default;
 }
 
-.node text {
+body {
 	font-size: 14px;
 	color: rgba(0,0,0,0.87);
 	font-family:
@@ -39,54 +39,60 @@
 .d3-tip {
   line-height: 1;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0,0,0,0.87);
   color: white;
   border-radius: 2px;
   pointer-events: none;
 }
 
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  position: absolute;
-  pointer-events: none;
+/* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
+.switch-field {
+	padding: 40px;
+	overflow: hidden;
 }
 
-/* Northward tooltips */
-.d3-tip.n:after {
-  content: "\25BC";
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-  text-align: center;
+.switch-title {
+	margin-bottom: 6px;
 }
 
-/* Eastward tooltips */
-.d3-tip.e:after {
-  content: "\25C0";
-  margin: -4px 0 0 0;
-  top: 50%;
-  left: -8px;
+.switch-field input {
+    position: absolute !important;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    width: 1px;
+    border: 0;
+    overflow: hidden;
 }
 
-/* Southward tooltips */
-.d3-tip.s:after {
-  content: "\25B2";
-  margin: 0 0 1px 0;
-  top: -8px;
-  left: 0;
-  text-align: center;
+.switch-field label {
+	float: left;
+	display: inline-block;
+	width: 60px;
+	background-color: #f3f3f3;
+	text-align: center;
+	padding: 6px 14px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-transition: all 0.1s ease-in-out;
+	-moz-transition:    all 0.1s ease-in-out;
+	-ms-transition:     all 0.1s ease-in-out;
+	-o-transition:      all 0.1s ease-in-out;
+	transition:         all 0.1s ease-in-out;
 }
 
-/* Westward tooltips */
-.d3-tip.w:after {
-  content: "\25B6";
-  margin: -4px 0 0 -1px;
-  top: 50%;
-  left: 100%;
+.switch-field label:hover {
+	cursor: pointer;
+}
+
+.switch-field input:checked + label {
+	background-color: #efa2cc;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.switch-field label:first-of-type {
+	border-radius: 4px 0 0 4px;
+}
+
+.switch-field label:last-of-type {
+	border-radius: 0 4px 4px 0;
 }

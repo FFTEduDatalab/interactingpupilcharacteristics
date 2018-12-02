@@ -42,32 +42,38 @@ var svg=d3.select("body")
 
 svg.call(tip);		// invoke the tip in the context of viz
 
-d3.json("treeDataflat_characteristics.json", function(error, json) {
-	// turn flat data into hierarchical data, required by tree
-	var dataMap = json.reduce(function(map, node) {
-		map[node.name] = node;
-		return map;
-	}, {});
+function loadDataset(value) {
+	loaded = 0
 
-	var treeData = [];
+	var jsonFile = "treeDataflat_characteristics_" + value + ".json"
+	d3.json(jsonFile, function(error, json) {
+		var dataMap = json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
+			map[node.name] = node;
+			return map;
+		}, {});
 
-	json.forEach(function(node) {
-		var parent = dataMap[node.parent];
-		if (parent) {
-			(parent.children || (parent.children = []))
-			.push(node);
-		} else {
-			treeData.push(node);
-		}
+		var treeData = [];
+
+		json.forEach(function(node) {
+			var parent = dataMap[node.parent];
+			if (parent) {
+				(parent.children || (parent.children = []))
+				.push(node);
+			} else {
+				treeData.push(node);
+			}
+		});
+
+		root=treeData[0]
+
+		root.x0=height/2		// i.e. middle of the svg, taking into account svg margin
+		root.y0=0		// i.e. top of the svg, taking into account svg margin
+
+		draw(root);
 	});
+}
 
-	root=treeData[0]
-
-	root.x0=height/2		// i.e. middle of the svg, taking into account svg margin
-	root.y0=0		// i.e. top of the svg, taking into account svg margin
-
-	draw(root);
-});
+loadDataset("ks2att")
 
 d3.select(self.frameElement).style("height", "500px");
 
@@ -87,6 +93,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			return !d.children && !d._children;		// see defn below
 		})
 		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; });		// current position of active node
+		// .attr("transform", function(d) { console.log (d); return "translate(" + d.parent.x0 + "," + d.parent.y0 + ")"; });		// current position of active node
 
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
@@ -130,7 +137,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.style("fill-opacity", 1);
 
 	var nodeRemoved = node.exit().transition()
-		.duration(duration)
+		.duration(function() {
+			if (loaded==0) {
+				return 0;		// no transition on initial load
+			}
+			else {
+				return duration;
+			}
+		})
 		.attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })		// new position of active node
 		.remove();
 
@@ -138,7 +152,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.attr("r", 1e-6);
 
 	nodeRemoved.select("text")
-	  .style("fill-opacity", 1e-6);
+		.style("fill-opacity", 1e-6);
 
 	var link = svg.selectAll("path.link")		// define function that adds each link that is required
 		.data(links, function(d) { return d.target.id; });
@@ -147,7 +161,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.insert("path", "g")
 		.attr("class", "link")
 		.attr("d", function(d) {
-			var o = {x: source.x0, y: source.y0};		// parent's current position
+			var o = {x: source.x0, y: source.y0};		// current position of active node
 			return diagonal({source: o, target: o});
 		});
 
@@ -163,15 +177,22 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.attr("d", diagonal);
 
 	link.exit().transition()
-		.duration(duration)
+		.duration(function() {
+			if (loaded==0) {
+				return 0;		// no transition on initial load
+			}
+			else {
+				return duration;
+			}
+		})
 		.attr("d", function(d) {
-			var o = {x: source.x, y: source.y};		// parent's new position
+			var o = {x: source.x, y: source.y};		// new position of active node
 			return diagonal({source: o, target: o});
 		})
 		.remove();
 
-	nodes.forEach(function(d) {		// stash node current positions for transition
-		d.x0 = d.x;
+	nodes.forEach(function(d) {
+		d.x0 = d.x;		// stash current position of nodes for subsequent use
 		d.y0 = d.y;
 	});
 
@@ -215,5 +236,5 @@ function expandDescendants(d) {
 
 function expandAll() {
 	expandDescendants(root);
-	draw(root);		// XXX: causing issue with transition where expand all button is used
+	draw(root);
 }
