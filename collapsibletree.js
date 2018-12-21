@@ -19,7 +19,7 @@ var colorLookup=[
 
 var loaded=0,
 	i=0,
-	duration=750,
+	duration=1250,
 	root;
 
 var tree=d3.layout.tree()
@@ -66,7 +66,7 @@ function loadDataset(value) {
 
 		root=treeData[0]
 
-		root.x0=height/2		// i.e. middle of the svg, taking into account svg margin
+		root.x0=width/2		// i.e. middle of the svg, taking into account svg margin
 		root.y0=0		// i.e. top of the svg, taking into account svg margin
 
 		draw(root);
@@ -89,7 +89,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
 
 	var node = svg.selectAll("g.node")		//	define function that adds each node that is required
-		.data(nodes, function(d) {return d.id || (d.id = ++i); });
+		.data(nodes, function(d) { return d.id || (d.id = ++i); });
 
 	var nodeStart=node.enter()		// joins data to elements
 		.append("g")		// appended as a group
@@ -97,7 +97,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.classed("nochild", function(d) {		// conditionally adds an additional class (.attr can't be used to add additional classes)
 			return !d.children && !d._children;		// see defn below
 		})
-		.attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; });		// current position of active node
+		.attr("transform", function(d) {
+			if (source.xf!=null) {		// where expand all button is used, the position which nodes are in before the expansion starts are used as the starting point
+				return "translate(" + source.xf + "," + source.yf + ")";
+ 			}
+			else {
+				return "translate(" + source.x0 + "," + source.y0 + ")";
+			}
+		});
 
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
@@ -165,8 +172,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.insert("path", "g")
 		.attr("class", "link")
 		.attr("d", function(d) {
-			var o = {x: source.x0, y: source.y0};		// current position of active node
-			return diagonal({source: o, target: o});
+			if (source.xf!=null) {		// where expand all button is used, the position which nodes are in before the expansion starts are used as the starting point
+				var o = {x: source.xf, y: source.yf};
+				return diagonal({source: o, target: o});
+ 			}
+			else {
+				var o = {x: source.x0, y: source.y0};
+				return diagonal({source: o, target: o});
+			}
 		});
 
 	link.transition()
@@ -225,21 +238,43 @@ function collapseDescendants(d) {
 }
 
 function expandDescendants(d) {
-	if (d.children) {
-		d.children.forEach(function(e){
-			expandDescendants(e)
-		});
-	}
-	else if (d._children) {
+	if (d._children) {
 		d._children.forEach(function(e){
 			expandDescendants(e)
 		});
 		d.children = d._children;
-		d._children = null;
+		d._children = null
+		draw(d);
+	}
+	else if (d.children) {
+		d.children.forEach(function(e){
+			expandDescendants(e)
+		});
+	};
+}
+
+function stashPosition(d) {		// used to stash the position of nodes before the expansion is drawn - so that e.g. right hand nodes aren't drawn from a position after left hand nodes have already been drawn
+	if (d.children) {
+		d.children.forEach(function(e){
+			stashPosition(e)
+			e.xf = e.x;
+			e.yf = e.y;
+		});
+	};
+}
+
+function clearPosition(d) {
+	if (d.children) {
+		d.children.forEach(function(e){
+			clearPosition(e)
+			d.xf = null;
+			d.yf = null;
+		});
 	};
 }
 
 function expandAll() {
+	stashPosition(root);
 	expandDescendants(root);
-	draw(root);
+	clearPosition(root);
 }
