@@ -2,6 +2,11 @@ var margin={top: 120, right: 20, bottom: 120, left: 20},
 	width=1000 - margin.right - margin.left,
 	height=800 - margin.top - margin.bottom;
 
+var loaded=0,
+	i=0,
+	duration=1250,
+	root;
+
 var colorLookup=[
 	(1, "rgb(230,0,126)"),
 	(2, "rgb(213,15,135)"),
@@ -17,10 +22,19 @@ var colorLookup=[
 	(12, "rgb(45,170,225)")
 ]
 
-var loaded=0,
-	i=0,
-	duration=1250,
-	root;
+titleHeaders={
+	"ks2att":"Primary attainment by pupil characteristics",
+	"ks2prog":"Primary progress by pupil characteristics",
+	"ks4att":"Secondary attainment by pupil characteristics",
+	"ks4prog":"Secondary progress by pupil characteristics"
+}
+
+titleSubheads={
+	"ks2att":"Reaching the expected standard in KS2 reading, writing and maths, 2017",
+	"ks2prog":"Average combined progress in KS2 reading, writing and maths, 2017",
+	"ks4att":"Attainment 8 score, 2017",
+	"ks4prog":"Progress 8 score, 2017"
+}
 
 var tree=d3.layout.tree()
 	.size([width, height]);
@@ -39,6 +53,43 @@ var svg=d3.select("body")
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")		// creates a group element that will contain all objects within the SVG
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("text")
+	.attr("class", "title header")
+	.attr("id", "title")
+	.attr("text-anchor", "middle")
+	.attr("x", width/2)
+	.attr("y", -90)
+	.text(titleHeaders["ks2att"]);
+
+svg.append("text")
+	.attr("class", "title")
+	.attr("text-anchor", "middle")
+	.attr("x", width/2)
+	.attr("y", -70)
+	.text(titleSubheads["ks2att"]);
+
+svg.append("text")
+	.attr("class", "notes header")
+	.attr("y", height + margin.bottom - 30)
+	.text("Notes");
+
+svg.append("text")
+	.attr("class", "notes")
+	.attr("y", height + margin.bottom - 20)
+	.text("Pupils in state-funded establishments");
+
+svg.append("text")
+	.attr("class", "notes")
+	.attr("y", height + margin.bottom - 10)
+	.text("Source: FFT Education Datalab analysis of the National Pupil Database");
+
+svg.append("image")
+	.attr("href", "fft_education_datalab_logo_lo.png")
+	.attr("x", width + margin.right - 180 - 20)
+	.attr("y", height + margin.bottom - 45 - 10)
+	.attr("height", "45px")
+	.attr("width", "180px");
 
 svg.call(tip);		// invoke the tip in the context of viz
 
@@ -69,6 +120,23 @@ function loadDataset(value) {
 
 		root.x0=width/2		// i.e. middle of the svg, taking into account svg margin
 		root.y0=0		// i.e. top of the svg, taking into account svg margin
+
+		d3.selectAll(".title").remove()
+
+		svg.append("text")
+			.attr("class", "title header")
+			.attr("id", "title")
+			.attr("text-anchor", "middle")
+			.attr("x", width/2)
+			.attr("y", -90)
+			.text(titleHeaders[value]);
+
+		svg.append("text")
+			.attr("class", "title")
+			.attr("text-anchor", "middle")
+			.attr("x", width/2)
+			.attr("y", -70)
+			.text(titleSubheads[value]);
 
 		draw(root);
 	});

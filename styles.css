@@ -14,14 +14,14 @@
 }
 
 .node circle.unfilled {
-	fill: white;
+	fill: #f3f3f3;
 }
 
 .node.nochild circle {
 	cursor: default;
 }
 
-body {
+body, button {
 	font-size: 14px;
 	color: rgba(0,0,0,0.87);
 	font-family:
@@ -45,9 +45,13 @@ body {
   pointer-events: none;
 }
 
+svg {
+	background-color: #f3f3f3;
+}
+
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
-.switch-field {
-	padding: 40px;
+.switch-controls {
+	padding: 20px;
 	overflow: hidden;
 }
 
@@ -55,7 +59,7 @@ body {
 	margin-bottom: 6px;
 }
 
-.switch-field input {
+.switch-controls input {
     position: absolute !important;
     clip: rect(0, 0, 0, 0);
     height: 1px;
@@ -64,7 +68,7 @@ body {
     overflow: hidden;
 }
 
-.switch-field label {
+.switch-controls label {
 	float: left;
 	display: inline-block;
 	width: 60px;
@@ -79,20 +83,61 @@ body {
 	transition:         all 0.1s ease-in-out;
 }
 
-.switch-field label:hover {
+.switch-controls label:hover {
 	cursor: pointer;
 }
 
-.switch-field input:checked + label {
+.switch-controls input:checked + label {
 	background-color: #efa2cc;
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 
-.switch-field label:first-of-type {
+.switch-controls label:first-of-type {
 	border-radius: 4px 0 0 4px;
 }
 
-.switch-field label:last-of-type {
+.switch-controls label:last-of-type {
 	border-radius: 0 4px 4px 0;
+}
+
+button {
+	float: left;
+	display: inline-block;
+	border-radius: 4px 4px 4px 4px;
+	background-color: #f3f3f3;
+	text-align: center;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* SVG text*/
+svg {
+	color: rgba(0,0,0,0.87);
+	font-family:
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen-Sans,
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue",
+		sans-serif;
+}
+
+svg .title {
+	font-weight: bolder;
+	font-size: 14px;
+}
+
+svg .title.header {
+	font-size: 20px;
+}
+
+svg .notes {
+	font-size: 10px;
+}
+
+svg .notes.header {
+	text-decoration: underline;
 }
