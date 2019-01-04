@@ -30,7 +30,6 @@ var diagonal=d3.svg.diagonal()		// function that will be used to draw the links 
 var tip = d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
 	.direction('ne')
-	.html(function(d) { return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value + "%";})
 
 var svg=d3.select("body")
 	.append("svg")
@@ -106,6 +105,15 @@ function loadDataset(value) {
 
 		svg.select(".legendLinear")
 		  .call(legendLinear);
+
+		tip.html(function(d) {
+			if(value=='ks4basics') {
+				return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value + "%";
+			}
+			else {
+				return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value;
+			}
+		});
 
 		var dataMap = json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
 			map[node.name] = node;
