@@ -45,7 +45,8 @@ svg.call(tip);		// invoke the tip in the context of viz
 function loadDataset(value) {
 	loaded = 0
 
-	var jsonFile = "treeDataflat_characteristics_" + value + ".json"
+	var jsonFile = "ks4att.json"
+	// var jsonFile = "treeDataflat_characteristics_" + value + ".json"
 	d3.json(jsonFile, function(error, json) {
 		var dataMap = json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
 			map[node.name] = node;
@@ -118,7 +119,20 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			if (d.depth<3){
 				return d.visible_name;
 			}})
-		.attr("x", function(d) { return (d.value + 4) * -1 })
+		.attr("x", function(d) {
+			if (d.depth==0) {
+				return (30+4)*-1;
+			}
+			else if (d.depth==1) {
+				return (20+4)*-1;
+			}
+			else if (d.depth==2) {
+				return (10+4)*-1;
+			}
+			else if (d.depth>2) {
+				return (5+4)*-1;
+			}
+		})
 		.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
 		.attr("text-anchor", "end")
 		.style("fill-opacity", 1e-6);
@@ -135,7 +149,20 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });		// new position of each node
 
 	nodePositioned.select("circle")
-		.attr("r", function(d) { return d.value; })
+		.attr("r", function(d) {
+			if (d.depth==0) {
+				return 30;
+			}
+			else if (d.depth==1) {
+				return 20;
+			}
+			else if (d.depth==2) {
+				return 10;
+			}
+			else if (d.depth>2) {
+				return 5;
+			}
+		})
 		.attr("class", function(d) {
 			if (d._children) {		// see defn below
 				return "filled";
