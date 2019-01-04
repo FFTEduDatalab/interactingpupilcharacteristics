@@ -98,8 +98,7 @@ svg.call(tip);		// invoke the tip in the context of viz
 function loadDataset(value) {
 	loaded = 0
 
-	var jsonFile = "ks4att.json"
-	// var jsonFile = "treeDataflat_characteristics_" + value + ".json"
+	var jsonFile = value + ".json"
 	d3.json(jsonFile, function(error, json) {
 
 		linear.domain([Math.floor(d3.min(json, function(d) { return d.value; })/10)*10,Math.ceil(d3.max(json, function(d) { return d.value; })/10)*10])
@@ -151,7 +150,7 @@ function loadDataset(value) {
 	});
 }
 
-loadDataset("ks2att")
+loadDataset("ks4basics")
 
 d3.select(self.frameElement).style("height", "500px");
 
