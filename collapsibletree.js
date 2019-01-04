@@ -7,21 +7,6 @@ var loaded=0,
 	duration=1250,
 	root;
 
-var colorLookup=[
-	(1, "rgb(230,0,126)"),
-	(2, "rgb(213,15,135)"),
-	(3, "rgb(196,31,144)"),
-	(4, "rgb(180,46,153)"),
-	(5, "rgb(163,62,162)"),
-	(6, "rgb(146,77,171)"),
-	(7, "rgb(129,93,180)"),
-	(8, "rgb(112,108,189)"),
-	(9, "rgb(95,124,198)"),
-	(10, "rgb(79,139,207)"),
-	(11, "rgb(62,155,216)"),
-	(12, "rgb(45,170,225)")
-]
-
 titleHeaders={
 	"ks2att":"Primary attainment by pupil characteristics",
 	"ks2prog":"Primary progress by pupil characteristics",
@@ -53,6 +38,18 @@ var svg=d3.select("body")
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")		// creates a group element that will contain all objects within the SVG
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var linear = d3.scale.linear()		// domain and range are set as part of loading dataset
+
+svg.append("g")
+	.attr("class", "legendLinear")
+	.attr("transform", "translate(" + (width - 80) + ",-30)");		// for alignment with the top of first node (r=30)
+
+var legendLinear = d3.legend.color()
+	.shapeWidth(30)
+	.cells(8)
+	.orient('vertical')
+	.scale(linear);
 
 svg.append("text")
 	.attr("class", "title header")
@@ -104,6 +101,13 @@ function loadDataset(value) {
 	var jsonFile = "ks4att.json"
 	// var jsonFile = "treeDataflat_characteristics_" + value + ".json"
 	d3.json(jsonFile, function(error, json) {
+
+		linear.domain([Math.floor(d3.min(json, function(d) { return d.value; })/10)*10,Math.ceil(d3.max(json, function(d) { return d.value; })/10)*10])
+			.range(["rgb(230,0,126)", "rgb(45,170,225)"]);
+
+		svg.select(".legendLinear")
+		  .call(legendLinear);
+
 		var dataMap = json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
 			map[node.name] = node;
 			return map;
@@ -182,7 +186,9 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
-		.style("stroke", function(d) { return colorLookup[Math.floor(Math.random()*10+1)] })
+		.style("stroke", function(d) {
+			return linear(Math.floor(d.value/10)*10)
+		})
 		.on('mouseover', tip.show)
 		.on('mouseout', tip.hide)
 		.on("click", toggleDescendants);	// passes details of node to click function
