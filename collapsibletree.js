@@ -4,21 +4,60 @@ var margin={top: 120, right: 20, bottom: 120, left: 20},
 
 var loaded=0,
 	i=0,
+	buckets,
+	bucketWidth,
 	duration=1250,
 	root;
 
-titleHeaders={
+var buckets={
+	"ks4att":7,
+	"ks4prog":9,
+	"ks4basics":7
+}
+
+var bucketWidths={
+	"ks4att":5,
+	"ks4prog":0.2,
+	"ks4basics":10
+}
+
+var colorLookup={
+	7:[
+		"rgb(230,0,126)",
+		"rgb(199,28,143)",
+		"rgb(168,57,159)",
+		"rgb(138,85,176)",
+		"rgb(107,113,192)",
+		"rgb(76,142,209)",
+		"rgb(45,170,225)"
+	],
+	9:[
+		"rgb(230,0,126)",
+		"rgb(207,21,138)",
+		"rgb(184,43,151)",
+		"rgb(161,64,163)",
+		"rgb(138,85,176)",
+		"rgb(114,106,188)",
+		"rgb(91,128,200)",
+		"rgb(68,149,213)",
+		"rgb(45,170,225)"
+	]
+}
+
+var titleHeaders={
 	"ks2att":"Primary attainment by pupil characteristics",
 	"ks2prog":"Primary progress by pupil characteristics",
 	"ks4att":"Secondary attainment by pupil characteristics",
-	"ks4prog":"Secondary progress by pupil characteristics"
+	"ks4prog":"Secondary progress by pupil characteristics",
+	"ks4basics":"Secondary attainment by pupil characteristics",
 }
 
-titleSubheads={
-	"ks2att":"Reaching the expected standard in KS2 reading, writing and maths, 2017",
-	"ks2prog":"Average combined progress in KS2 reading, writing and maths, 2017",
-	"ks4att":"Attainment 8 score, 2017",
-	"ks4prog":"Progress 8 score, 2017"
+var titleSubheads={
+	"ks2att":"Percentage reaching the expected standard in KS2 reading, writing and maths, 2017",
+	"ks2prog":"Average combined progress score in KS2 reading, writing and maths, 2017",
+	"ks4att":"Average Attainment 8 score, 2017",
+	"ks4prog":"Average Progress 8 score, 2017",
+	"ks4basics":"Percentage achieving a standard pass (grade 4+) in English and maths GCSEs, 2017"
 }
 
 var tree=d3.layout.tree()
@@ -38,32 +77,29 @@ var svg=d3.select("body")
 	.append("g")		// creates a group element that will contain all objects within the SVG
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var linear = d3.scale.linear()		// domain and range are set as part of loading dataset
+var quantize = d3.scale.quantize()		// domain and range are set as part of loading dataset
 
 svg.append("g")
-	.attr("class", "legendLinear")
-	.attr("transform", "translate(" + (width - 80) + ",-30)");		// for alignment with the top of first node (r=30)
+	.attr("class", "legendQuant")
+	.attr("transform", "translate(" + (width - 120) + ",-30)");		// for alignment with the top of first node (r=30)
 
-var legendLinear = d3.legend.color()
+var legend = d3.legend.color()
 	.shapeWidth(30)
-	.cells(8)
 	.orient('vertical')
-	.scale(linear);
+	.scale(quantize);
 
 svg.append("text")
 	.attr("class", "title header")
 	.attr("id", "title")
 	.attr("text-anchor", "middle")
 	.attr("x", width/2)
-	.attr("y", -90)
-	.text(titleHeaders["ks2att"]);
+	.attr("y", -90);
 
 svg.append("text")
 	.attr("class", "title")
 	.attr("text-anchor", "middle")
 	.attr("x", width/2)
-	.attr("y", -70)
-	.text(titleSubheads["ks2att"]);
+	.attr("y", -70);
 
 svg.append("text")
 	.attr("class", "notes header")
@@ -96,15 +132,18 @@ svg.call(tip);		// invoke the tip in the context of viz
 
 function loadDataset(value) {
 	loaded = 0
-
 	var jsonFile = value + ".json"
+
 	d3.json(jsonFile, function(error, json) {
 
-		linear.domain([Math.floor(d3.min(json, function(d) { return d.value; })/10)*10,Math.ceil(d3.max(json, function(d) { return d.value; })/10)*10])
-			.range(["rgb(230,0,126)", "rgb(45,170,225)"]);
+		bucketWidth=bucketWidths[value]
 
-		svg.select(".legendLinear")
-		  .call(legendLinear);
+		quantize.domain([Math.floor(d3.min(json, function(d) { return d.value; })/bucketWidth)*bucketWidth,Math.ceil(d3.max(json, function(d) { return d.value; })/bucketWidth)*bucketWidth])
+			.range(colorLookup[buckets[value]]);
+			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// See https://github.com/d3/d3-interpolate#quantize
+
+		svg.select(".legendQuant")
+		  .call(legend);
 
 		tip.html(function(d) {
 			if(value=='ks4basics') {
@@ -194,7 +233,10 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
 		.style("stroke", function(d) {
-			return linear(Math.floor(d.value/10)*10)
+			return quantize(d.value)
+		})
+		.style("fill", function(d) {
+			return quantize(d.value)
 		})
 		.on('mouseover', tip.show)
 		.on('mouseout', tip.hide)

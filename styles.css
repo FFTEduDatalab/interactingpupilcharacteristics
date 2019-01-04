@@ -9,12 +9,8 @@
 	stroke-width: 3px;
 }
 
-.node circle.filled {
-	fill: grey;
-}
-
 .node circle.unfilled {
-	fill: #f3f3f3;
+	fill: #f3f3f3 !important;
 }
 
 .node.nochild circle {
