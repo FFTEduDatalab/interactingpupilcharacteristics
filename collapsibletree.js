@@ -45,7 +45,7 @@ var diagonal=d3.svg.diagonal()		// function that will be used to draw the links 
 var tip = d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
 	.direction('ne')
-	.html(function(d) { return d.visible_name + "<br>" + d.value;})
+	.html(function(d) { return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value + "%";})
 
 var svg=d3.select("body")
 	.append("svg")
@@ -71,13 +71,18 @@ svg.append("text")
 
 svg.append("text")
 	.attr("class", "notes header")
-	.attr("y", height + margin.bottom - 30)
+	.attr("y", height + margin.bottom - 40)
 	.text("Notes");
 
 svg.append("text")
 	.attr("class", "notes")
+	.attr("y", height + margin.bottom - 30)
+	.text("Pupils in state-funded establishments.");
+
+svg.append("text")
+	.attr("class", "notes")
 	.attr("y", height + margin.bottom - 20)
-	.text("Pupils in state-funded establishments");
+	.text("*Pupil subgroups are only shown when both subgroups consist of at least 10 pupils.");
 
 svg.append("text")
 	.attr("class", "notes")
