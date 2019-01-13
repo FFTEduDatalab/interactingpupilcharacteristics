@@ -57,8 +57,35 @@ var titleSubheads={
 	"ks2prog":"Average combined progress score in KS2 reading, writing and maths, 2017",
 	"ks4att":"Average Attainment 8 score, 2017",
 	"ks4prog":"Average Progress 8 score, 2017",
-	"ks4basics":"Percentage achieving a standard pass (grade 4+) in English and maths GCSEs, 2017"
+	"ks4basics":"Percentage achieving a standard pass or better (grade 4+) in English and maths GCSEs, 2017"
 }
+
+var prim=
+	'<div class="switch-title">Select performance measure:</div>\
+	<input type="radio" id="measure_1" name="switch2" value="ks2att" onchange="loadDataset(value)" checked/>\
+	<label for="measure_1">KS2 attainment</label>\
+	<input type="radio" id="measure_2" name="switch2" value="ks2prog" onchange="loadDataset(value)"/>\
+	<label for="measure_2">KS2 progress</label>'
+
+var sec=
+	'<div class="switch-title">Select performance measure:</div>\
+	<input type="radio" id="measure_1" name="measure-switch" value="ks4basics" onchange="loadDataset(value)" checked/>\
+	<label for="measure_1">Basics</label>\
+	<input type="radio" id="measure_2" name="measure-switch" value="ks4att" onchange="loadDataset(value)"/>\
+	<label for="measure_2">Attainment 8</label>\
+	<input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/>\
+	<label for="measure_3">Progress 8</label>'
+
+function updateControls(value) {
+	if (value=='primary') {
+		return document.getElementById("measureControls").innerHTML=prim;
+	}
+	else if (value=='secondary') {
+		return document.getElementById("measureControls").innerHTML=sec;
+	}
+}
+
+updateControls('primary')
 
 var tree=d3.layout.tree()
 	.size([width, height]);
@@ -140,7 +167,7 @@ function loadDataset(value) {
 
 		quantize.domain([Math.floor(d3.min(json, function(d) { return d.value; })/bucketWidth)*bucketWidth,Math.ceil(d3.max(json, function(d) { return d.value; })/bucketWidth)*bucketWidth])
 			.range(colorLookup[buckets[value]]);
-			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// See https://github.com/d3/d3-interpolate#quantize
+			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// d3 v4. See https://github.com/d3/d3-interpolate#quantize
 
 		svg.select(".legendQuant")
 		  .call(legend);

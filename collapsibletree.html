@@ -6,17 +6,14 @@
 	</head>
 	<body>
 		<div class="controls">
-			<div class="switch-controls">
-				<div class="switch-title">Select dataset:</div>
-				<input type="radio" id="switch_1" name="switch" value="ks2att" onchange="loadDataset(value)" checked/>
-				<label for="switch_1">KS2 attainment</label>
-				<input type="radio" id="switch_2" name="switch" value="ks2prog" onchange="loadDataset(value)"/>
-				<label for="switch_2">KS2 progress</label>
-				<input type="radio" id="switch_3" name="switch" value="ks4att" onchange="loadDataset(value)"/>
-				<label for="switch_3">KS4 attainment</label>
-				<input type="radio" id="switch_4" name="switch" value="ks4prog" onchange="loadDataset(value)"/>
-				<label for="switch_4">KS4 progress</label>
+			<div class="switch-controls" id="phaseControls">
+				<div class="switch-title">Select phase:</div>
+				<input type="radio" id="phase_1" name="phase-switch" value="primary" onchange="updateControls(value)" checked/>
+				<label for="phase_1">Primary</label>
+				<input type="radio" id="phase_2" name="phase-switch" value="secondary" onchange="updateControls(value)"/>
+				<label for="phase_2">Secondary</label>
 			</div>
+			<div class="switch-controls" id="measureControls"></div>
 		<div class="buttons">
 			<button type="button" onclick="expandAll()">Expand all</button>
 		</div>

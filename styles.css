@@ -67,7 +67,7 @@ svg {
 .switch-controls label {
 	float: left;
 	display: inline-block;
-	width: 60px;
+	width: 100px;
 	background-color: #f3f3f3;
 	text-align: center;
 	padding: 6px 14px;
