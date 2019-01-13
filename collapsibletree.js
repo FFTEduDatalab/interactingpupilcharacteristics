@@ -173,11 +173,23 @@ function loadDataset(value) {
 		  .call(legend);
 
 		tip.html(function(d) {
-			if(value=='ks4basics') {
-				return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value + "%";
+			if (value=='ks4basics' && d.name=='all') {
+				return "A total of " + d.value + "% of pupils nationally achieved the basics measure in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
 			}
-			else {
-				return d.visible_name + "<br>" + d.pupils.toLocaleString() + " pupils" + "<br>" + d.value;
+			else if (value=='ks4basics' && d.name!='all') {
+				return "A total of " + d.value + "% of " + d.tooltipText + " achieved the basics measure in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+			}
+			else if (value=='ks4att' && d.name=='all') {
+				return "Nationally, pupils achieved an average Attainment 8 score of " + d.value + "in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+			}
+			else if (value=='ks4att' && d.name!='all') {
+				return d.tooltipText + " achieved an average Attainment 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+			}
+			else if (value=='ks4prog' && d.name=='all') {
+				return "Nationally, pupils achieved an average Progress 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+			}
+			else if (value=='ks4prog' && d.name!='all') {
+				return d.tooltipText + " achieved an average Progress 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
 			}
 		});
 
@@ -272,7 +284,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodeStart.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.text(function(d) {
 			if (d.depth<3){
-				return d.visible_name;
+				return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
 			}})
 		.attr("x", function(d) {
 			if (d.depth==0) {
