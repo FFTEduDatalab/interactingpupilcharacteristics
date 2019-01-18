@@ -21,6 +21,15 @@ var bucketWidths={
 	"ks4basics":10
 }
 
+var radiuses={
+	0:30,
+	1:20,
+	2:10,
+	3:5,
+	4:5,
+	5:5
+}
+
 var colorLookup={
 	7:[
 		"rgb(230,0,126)",
@@ -44,20 +53,12 @@ var colorLookup={
 	]
 }
 
-var titleHeaders={
-	"ks2att":"Primary attainment by pupil characteristics",
-	"ks2prog":"Primary progress by pupil characteristics",
-	"ks4att":"Secondary attainment by pupil characteristics",
-	"ks4prog":"Secondary progress by pupil characteristics",
-	"ks4basics":"Secondary attainment by pupil characteristics",
-}
-
 var titleSubheads={
-	"ks2att":"Percentage reaching the expected standard in KS2 reading, writing and maths, 2017",
-	"ks2prog":"Average combined progress score in KS2 reading, writing and maths, 2017",
-	"ks4att":"Average Attainment 8 score, 2017",
-	"ks4prog":"Average Progress 8 score, 2017",
-	"ks4basics":"Percentage achieving a standard pass or better (grade 4+) in English and maths GCSEs, 2017"
+	"ks2att":"Pupils reaching the expected standard in KS2 reading, writing and maths, 2017 (%)",
+	"ks2prog":"Average combined pupil progress score in KS2 reading, writing and maths, 2017",
+	"ks4att":"Average pupil Attainment 8 score, 2017",
+	"ks4prog":"Average pupil Progress 8 score, 2017",
+	"ks4basics":"Pupils achieving a standard pass or better (grade 4+) in English and maths GCSEs, 2017 (%)"
 }
 
 var prim=
@@ -93,7 +94,7 @@ var tree=d3.layout.tree()
 var diagonal=d3.svg.diagonal()		// function that will be used to draw the links between the nodes
 	.projection(function(d) { return [d.x, d.y]; });
 
-var tip = d3.tip()		// initialise d3 tooltip
+var tip=d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
 	.direction('ne')
 
@@ -104,13 +105,13 @@ var svg=d3.select("body")
 	.append("g")		// creates a group element that will contain all objects within the SVG
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var quantize = d3.scale.quantize()		// domain and range are set as part of loading dataset
+var quantize=d3.scale.quantize()		// domain and range are set as part of loading dataset
 
 svg.append("g")
 	.attr("class", "legendQuant")
 	.attr("transform", "translate(" + (width - 120) + ",-30)");		// for alignment with the top of first node (r=30)
 
-var legend = d3.legend.color()
+var legend=d3.legend.color()
 	.shapeWidth(30)
 	.orient('vertical')
 	.scale(quantize);
@@ -136,7 +137,7 @@ svg.append("text")
 svg.append("text")
 	.attr("class", "notes")
 	.attr("y", height + margin.bottom - 30)
-	.text("Pupils in state-funded establishments.");
+	.text("Pupils in state-funded establishments. Coastal is defined as attending a school with 10km of the coast.");
 
 svg.append("text")
 	.attr("class", "notes")
@@ -158,8 +159,8 @@ svg.append("image")
 svg.call(tip);		// invoke the tip in the context of viz
 
 function loadDataset(value) {
-	loaded = 0
-	var jsonFile = value + ".json"
+	loaded=0
+	var jsonFile=value + ".json"
 
 	d3.json(jsonFile, function(error, json) {
 
@@ -193,15 +194,15 @@ function loadDataset(value) {
 			}
 		});
 
-		var dataMap = json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
+		var dataMap=json.reduce(function(map, node) {		// turn flat data into hierarchical data, required by tree
 			map[node.name] = node;
 			return map;
 		}, {});
 
-		var treeData = [];
+		var treeData=[];
 
 		json.forEach(function(node) {
-			var parent = dataMap[node.parent];
+			var parent=dataMap[node.parent];
 			if (parent) {
 				(parent.children || (parent.children = []))
 				.push(node);
@@ -251,8 +252,10 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
 
-	var node = svg.selectAll("g.node")		//	define function that adds each node that is required
-		.data(nodes, function(d) { return d.id || (d.id = ++i); });
+	var node=svg.selectAll("g.node")		//	define function that adds each node that is required
+		.data(nodes, function(d) {
+			return d.id || (d.id = ++i);
+		});
 
 	var nodeStart=node.enter()		// joins data to elements
 		.append("g")		// appended as a group
@@ -313,22 +316,13 @@ function draw(source) {		// function to draw nodes and links - either used on th
 				return duration;
 			}
 		})
-		.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });		// new position of each node
+		.attr("transform", function(d) {
+			return "translate(" + d.x + "," + d.y + ")";				// new position of each node
+		});
 
 	nodePositioned.select("circle")
 		.attr("r", function(d) {
-			if (d.depth==0) {
-				return 30;
-			}
-			else if (d.depth==1) {
-				return 20;
-			}
-			else if (d.depth==2) {
-				return 10;
-			}
-			else if (d.depth>2) {
-				return 5;
-			}
+			return radiuses[d.depth];
 		})
 		.attr("class", function(d) {
 			if (d._children) {		// see defn below
@@ -350,7 +344,9 @@ function draw(source) {		// function to draw nodes and links - either used on th
 				return duration;
 			}
 		})
-		.attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })		// new position of active node
+		.attr("transform", function(d) {
+			return "translate(" + source.x + "," + source.y + ")";				// new position of active node
+		})
 		.remove();
 
 	nodeRemoved.select("circle")
@@ -359,7 +355,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 	nodeRemoved.select("text")
 		.style("fill-opacity", 1e-6);
 
-	var link = svg.selectAll("path.link")		// define function that adds each link that is required
+	var link=svg.selectAll("path.link")		// define function that adds each link that is required
 		.data(links, function(d) { return d.target.id; });
 
 	link.enter()
@@ -387,7 +383,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		})
 		.attr("d", diagonal);
 
-	link.exit().transition()
+	link.exit()
+		.transition()
 		.duration(function() {
 			if (loaded==0) {
 				return 0;		// no transition on initial load
