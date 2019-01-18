@@ -344,12 +344,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		});
 
 	nodePositioned.select("text")
-		.text(function(d) {
+		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned - meaning that for node text (only) it handles removal as well as addition
 			if (nodeTally[d.depth]<10){
-				return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
+				return 1;
+			}
+			else {
+				return 1e-6;
 			}
 		})
-		.style("fill-opacity", 1);
 
 	var nodeRemoved=node.exit()
 		.transition()
