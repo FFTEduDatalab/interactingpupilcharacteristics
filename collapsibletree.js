@@ -119,14 +119,14 @@ var legend=d3.legend.color()
 svg.append("text")
 	.attr("class", "title header")
 	.attr("id", "title")
-	.attr("text-anchor", "middle")
-	.attr("x", width/2)
+	.attr("text-anchor", "start")
+	.attr("x", 0)
 	.attr("y", -90);
 
 svg.append("text")
 	.attr("class", "title")
-	.attr("text-anchor", "middle")
-	.attr("x", width/2)
+	.attr("text-anchor", "start")
+	.attr("x", 0)
 	.attr("y", -70);
 
 svg.append("text")
@@ -221,15 +221,15 @@ function loadDataset(value) {
 		svg.append("text")
 			.attr("class", "title header")
 			.attr("id", "title")
-			.attr("text-anchor", "middle")
-			.attr("x", width/2)
+			.attr("text-anchor", "start")
+			.attr("x", 0)
 			.attr("y", -90)
-			.text(titleHeaders[value]);
+			.text('How pupil characteristics interact to influence educational attainment and progress');
 
 		svg.append("text")
 			.attr("class", "title")
-			.attr("text-anchor", "middle")
-			.attr("x", width/2)
+			.attr("text-anchor", "start")
+			.attr("x", 0)
 			.attr("y", -70)
 			.text(titleSubheads[value]);
 
@@ -269,8 +269,19 @@ function draw(source) {		// function to draw nodes and links - either used on th
  			}
 			else {
 				return "translate(" + source.x0 + "," + source.y0 + ")";
-			}
+			};
 		});
+
+	var nodeTally={}
+
+	nodes.forEach(function(d) {
+		if (nodeTally[d.depth]==null) {
+			nodeTally[d.depth]=1;
+		}
+		else {
+			nodeTally[d.depth]+=1
+		};
+	});
 
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
@@ -286,28 +297,28 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodeStart.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.text(function(d) {
-			if (d.depth<3){
-				return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
-			}})
+			return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
+		})
 		.attr("x", function(d) {
-			if (d.depth==0) {
-				return (30+4)*-1;
+			if (d.position=='left') {
+				return -1*(radiuses[d.depth]+4);
 			}
-			else if (d.depth==1) {
-				return (20+4)*-1;
-			}
-			else if (d.depth==2) {
-				return (10+4)*-1;
-			}
-			else if (d.depth>2) {
-				return (5+4)*-1;
+			else if (d.position=='right') {
+				return (radiuses[d.depth]+4);
 			}
 		})
 		.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
-		.attr("text-anchor", "end")
+		.attr("text-anchor", function(d) {
+			if (d.position=='left') {
+				return "end";
+			}
+			else if (d.position=='right') {
+				return "start";
+			}
+		})
 		.style("fill-opacity", 1e-6);
 
-	var nodePositioned = node.transition()
+	var nodePositioned=node.transition()
 		.duration(function() {
 			if (loaded==0) {
 				return 0;		// no transition on initial load
@@ -333,9 +344,15 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		});
 
 	nodePositioned.select("text")
+		.text(function(d) {
+			if (nodeTally[d.depth]<10){
+				return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
+			}
+		})
 		.style("fill-opacity", 1);
 
-	var nodeRemoved = node.exit().transition()
+	var nodeRemoved=node.exit()
+		.transition()
 		.duration(function() {
 			if (loaded==0) {
 				return 0;		// no transition on initial load
