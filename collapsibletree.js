@@ -99,7 +99,7 @@ var tip=d3.tip()		// initialise d3 tooltip
 		if (d.x>=width-260) {
 			return 'nw'
 		}
-		if (d.y==0) {
+		else if (d.y==0) {
 			return 'se'
 		}
 		else {
