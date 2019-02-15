@@ -203,8 +203,18 @@ function loadDataset(value) {
 			.range(colorLookup[buckets[value]]);
 			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// d3 v4. See https://github.com/d3/d3-interpolate#quantize
 
+		legend.labelFormat(function(d) {
+			if (value=="ks4basics") {
+				return d3.format(".0f")(d) + "%";
+			}
+			else {
+				console.log("help")
+				return d3.format(".1f")(d);
+			}
+		})
+
 		svg.select(".legendQuant")
-		  .call(legend);
+			.call(legend);
 
 		tip.html(function(d) {
 			if (value=='ks4basics' && d.name=='all') {
