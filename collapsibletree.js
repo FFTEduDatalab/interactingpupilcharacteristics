@@ -97,7 +97,21 @@ var diagonal=d3.svg.diagonal()		// function that will be used to draw the links 
 
 var tip=d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
-	.direction('ne')
+	.direction(function(d) {
+		console.log(d)
+		console.log(d.x,d.y)
+		if (d.x>=width-260) {
+			console.log("help")
+			return 'nw'
+		}
+		if (d.y==0) {
+			console.log("arghhh!")
+			return 'se'
+		}
+		else {
+			return 'ne'
+		}
+	});
 
 var svg=d3.select("body")
 	.append("svg")
