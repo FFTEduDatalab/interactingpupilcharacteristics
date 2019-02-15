@@ -32,6 +32,23 @@ body, button {
 		sans-serif;
 }
 
+svg {
+	background-color: #f3f3f3;
+}
+
+svg .button rect {
+	fill: #f3f3f3;
+	stroke: rgba(0, 0, 0, 0.2);
+	stroke-width:1px;
+	cursor: pointer;
+}
+
+svg .button text {
+	fill: rgba(0,0,0,0.87);
+	cursor: pointer;
+}
+
+/* Tooltips */
 .d3-tip {
 	line-height: 1;
 	padding: 12px;
@@ -46,13 +63,12 @@ body, button {
 	text-transform:capitalize;
 }
 
-svg {
-	background-color: #f3f3f3;
 }
 
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
 .switch-controls {
-	padding: 20px;
+	padding-bottom: 14px;
+	padding-left: 20px;
 	overflow: hidden;
 }
 

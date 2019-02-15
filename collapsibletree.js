@@ -4,6 +4,7 @@ var margin={top: 120, right: 20, bottom: 120, left: 20},
 
 var loaded=0,
 	i=0,
+	clickCount=0,
 	buckets,
 	bucketWidth,
 	duration=1250,
@@ -115,6 +116,28 @@ var legend=d3.legend.color()
 	.shapeWidth(30)
 	.orient('vertical')
 	.scale(quantize);
+
+svg.append("g")
+	.attr("class", "button")
+	.append("rect")
+	.attr("transform", "translate(0,-30)")		// for alignment with the top of first node (r=30)
+	.attr("width", 80)
+	.attr("height", 23)
+	.attr('rx', 4)
+	.attr('ry', 4)
+	.attr("visibility","hidden")
+	.on('click', function() {
+		expandAll();
+	});
+
+svg.select("g.button")
+	.append("text")
+	.text("Expand all")
+	.attr("transform", "translate(8,-13)")		// for alignment with the top of first node (r=30)
+	.attr("visibility","hidden")
+	.on('click', function() {
+		expandAll();
+	});
 
 svg.append("text")
 	.attr("class", "title header")
@@ -427,6 +450,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 };
 
 function toggleDescendants(d) {
+	clickCount+=1
+	if (clickCount>=4) {
+		console.log(clickCount);
+		svg.selectAll(".button").selectAll("*")
+			.attr("fill","red")
+			.attr("visibility","visible")
+	}
+
 	if (d.children) {
 		collapseDescendants(d);
 	}
