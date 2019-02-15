@@ -198,22 +198,22 @@ function loadDataset(value) {
 
 		tip.html(function(d) {
 			if (value=='ks4basics' && d.name=='all') {
-				return "A total of " + d.value + "% of pupils nationally achieved the basics measure in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4basics' && d.name!='all') {
-				return "A total of " + d.value + "% of " + d.tooltipText + " achieved the basics measure in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>" + d.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4att' && d.name=='all') {
-				return "Nationally, pupils achieved an average Attainment 8 score of " + d.value + "in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + "in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4att' && d.name!='all') {
-				return d.tooltipText + " achieved an average Attainment 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4prog' && d.name=='all') {
-				return "Nationally, pupils achieved an average Progress 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4prog' && d.name!='all') {
-				return d.tooltipText + " achieved an average Progress 8 score of " + d.value + " in 2017." + "<br>" + d.pupils.toLocaleString() + " pupils"
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 		});
 

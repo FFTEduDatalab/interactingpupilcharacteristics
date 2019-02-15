@@ -52,17 +52,31 @@ svg .button text {
 .d3-tip {
 	line-height: 1;
 	padding: 12px;
-	background: rgba(0,0,0,0.87);
+	background: #535353;
 	color: white;
 	border-radius: 2px;
 	pointer-events: none;
-	max-width: 300px;
+	max-width: 250px;
 }
 
-.d3-tip:first-letter {
+.d3-tip b {
+	font-weight: 600;
+}
+
+.d3-tip p:first-letter {
 	text-transform:capitalize;
 }
 
+.tooltip-header {
+	font-size: 1.5em;
+	font-weight: 600;
+	margin: 0px;
+}
+
+.tooltip-pupils {
+	font-style: italic;
+	text-align: right;
+	margin: 0px;
 }
 
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
@@ -144,11 +158,11 @@ svg {
 
 svg .title {
 	font-weight: bolder;
-	font-size: 14px;
+	font-size: 1em;
 }
 
 svg .title.header {
-	font-size: 20px;
+	font-size: 1.5em;
 }
 
 svg .notes {
