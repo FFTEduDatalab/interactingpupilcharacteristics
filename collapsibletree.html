@@ -5,15 +5,17 @@
 	    <link href='styles.css' type='text/css' rel='stylesheet' media='screen,projection'/>
 	</head>
 	<body>
-		<div class="controls">
-			<div class="switch-controls" id="phaseControls">
-				<div class="switch-title">Select phase:</div>
-				<input type="radio" id="phase_1" name="phase-switch" value="primary" onchange="updateControls(value)" checked/>
-				<label for="phase_1">Primary</label>
-				<input type="radio" id="phase_2" name="phase-switch" value="secondary" onchange="updateControls(value)"/>
-				<label for="phase_2">Secondary</label>
+		<div class="vis">
+			<div class="controls">
+				<div class="switch-controls" id="phaseControls">
+					<input type="radio" id="phase_1" name="phase-switch" value="primary" onchange="updateControls(value)" checked/>
+					<label for="phase_1">Primary</label>
+					<input type="radio" id="phase_2" name="phase-switch" value="secondary" onchange="updateControls(value)"/>
+					<label for="phase_2">Secondary</label>
+				</div><!--		whitespace commented out as divs are inline elements
+				--><div class="switch-controls" id="measureControls"></div>
 			</div>
-			<div class="switch-controls" id="measureControls"></div>
+		</div>
 		<script src='https://d3js.org/d3.v3.min.js'></script>
 		<script src='https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js'></script>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.13.0/d3-legend.min.js'></script>

@@ -63,20 +63,18 @@ var titleSubheads={
 }
 
 var prim=
-	'<div class="switch-title">Select performance measure:</div>\
+	'<input type="radio" id="measure_2" name="switch2" value="ks2prog" onchange="loadDataset(value)"/>\
+	<label for="measure_2">KS2 progress</label>\
 	<input type="radio" id="measure_1" name="switch2" value="ks2att" onchange="loadDataset(value)" checked/>\
-	<label for="measure_1">KS2 attainment</label>\
-	<input type="radio" id="measure_2" name="switch2" value="ks2prog" onchange="loadDataset(value)"/>\
-	<label for="measure_2">KS2 progress</label>'
+	<label for="measure_1">KS2 attainment</label>'
 
 var sec=
-	'<div class="switch-title">Select performance measure:</div>\
-	<input type="radio" id="measure_1" name="measure-switch" value="ks4basics" onchange="loadDataset(value)" checked/>\
-	<label for="measure_1">Basics</label>\
+	'<input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/>\
+	<label for="measure_3">Progress 8</label>\
 	<input type="radio" id="measure_2" name="measure-switch" value="ks4att" onchange="loadDataset(value)"/>\
 	<label for="measure_2">Attainment 8</label>\
-	<input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/>\
-	<label for="measure_3">Progress 8</label>'
+	<input type="radio" id="measure_1" name="measure-switch" value="ks4basics" onchange="loadDataset(value)" checked/>\
+	<label for="measure_1">Basics</label>'
 
 function updateControls(value) {
 	if (value=='primary') {
@@ -98,14 +96,10 @@ var diagonal=d3.svg.diagonal()		// function that will be used to draw the links 
 var tip=d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
 	.direction(function(d) {
-		console.log(d)
-		console.log(d.x,d.y)
 		if (d.x>=width-260) {
-			console.log("help")
 			return 'nw'
 		}
 		if (d.y==0) {
-			console.log("arghhh!")
 			return 'se'
 		}
 		else {
@@ -113,7 +107,7 @@ var tip=d3.tip()		// initialise d3 tooltip
 		}
 	});
 
-var svg=d3.select("body")
+var svg=d3.select(".vis")
 	.append("svg")
 	.attr("width", width + margin.right + margin.left)
 	.attr("height", height + margin.top + margin.bottom)
@@ -224,7 +218,6 @@ function loadDataset(value) {
 				return d3.format(".0f")(d) + "%";
 			}
 			else {
-				console.log("help")
 				return d3.format(".1f")(d);
 			}
 		})
@@ -240,7 +233,7 @@ function loadDataset(value) {
 				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>" + d.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4att' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + "in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4att' && d.name!='all') {
 				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
@@ -488,9 +481,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 function toggleDescendants(d) {
 	clickCount+=1
 	if (clickCount>=4) {
-		console.log(clickCount);
 		svg.selectAll(".button").selectAll("*")
-			.attr("fill","red")
 			.attr("visibility","visible")
 	}
 

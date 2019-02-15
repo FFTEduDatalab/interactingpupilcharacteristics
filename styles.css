@@ -32,6 +32,11 @@ body, button {
 		sans-serif;
 }
 
+.vis {
+	width: 1000px;
+	height: 730px;
+}
+
 svg {
 	background-color: #f3f3f3;
 }
@@ -80,9 +85,22 @@ svg .button text {
 }
 
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
+.controls {
+	white-space: nowrap;
+}
+
+.controls .switch-controls {
+	display: inline-block;
+	width: 50%;
+}
+
+.controls #measureControls {
+	text-align: right;
+}
+
 .switch-controls {
-	padding-bottom: 14px;
-	padding-left: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	overflow: hidden;
 }
 
@@ -114,6 +132,14 @@ svg .button text {
 	transition:         all 0.1s ease-in-out;
 }
 
+.switch-controls#phaseControls label {
+	float: left;
+}
+
+.switch-controls#measureControls label {
+	float: right;
+}
+
 .switch-controls label:hover {
 	cursor: pointer;
 }
@@ -124,11 +150,13 @@ svg .button text {
 	box-shadow: none;
 }
 
-.switch-controls label:first-of-type {
+.switch-controls#phaseControls label:first-of-type,
+.switch-controls#measureControls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
 	border-radius: 4px 0 0 4px;
 }
 
-.switch-controls label:last-of-type {
+.switch-controls#phaseControls label:last-of-type,
+.switch-controls#measureControls label:first-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
 	border-radius: 0 4px 4px 0;
 }
 
