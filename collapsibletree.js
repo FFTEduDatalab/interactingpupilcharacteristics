@@ -1,6 +1,6 @@
 var margin={top: 120, right: 20, bottom: 120, left: 20},
 	width=1000 - margin.right - margin.left,
-	height=800 - margin.top - margin.bottom;
+	height=730 - margin.top - margin.bottom;
 
 var loaded=0,
 	i=0,
@@ -170,7 +170,17 @@ svg.append("text")
 svg.append("text")
 	.attr("class", "notes")
 	.attr("y", height + margin.bottom - 10)
-	.text("Source: FFT Education Datalab analysis of the National Pupil Database");
+	.text("Source: FFT Education Datalab analysis of the National Pupil Database.");
+
+svg.append("a")
+	.attr("href", "interactingpupilcharacteristics.xlsx")
+	.attr("target","blank")			// fends off a console error relating to downloading
+	.append("text")
+	.attr("class", "notes url")
+	.attr("x", 312)
+	.attr("y", height + margin.bottom - 10)
+	.attr("href", "interactingpupilcharacteristics.xlsx")
+	.text("Download the data");
 
 svg.append("image")
 	.attr("href", "fft_education_datalab_logo_lo.png")

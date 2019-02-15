@@ -143,7 +143,6 @@ button {
 
 /* SVG text*/
 svg {
-	color: rgba(0,0,0,0.87);
 	font-family:
 		-apple-system,
 		BlinkMacSystemFont,
@@ -172,3 +171,9 @@ svg .notes {
 svg .notes.header {
 	text-decoration: underline;
 }
+
+svg .notes.url {
+	fill: rgb(230,0,126);
+	text-decoration: underline;
+}
+
