@@ -196,7 +196,9 @@ svg.append("a")
 	.attr("href", "interactingpupilcharacteristics.xlsx")
 	.text("Download the data");
 
-svg.append("image")
+svg.append("a")
+	.attr("href", "https://ffteducationdatalab.org.uk")
+	.append("image")
 	.attr("href", "fft_education_datalab_logo_lo.png")
 	.attr("x", width + margin.right - 180 - 20)
 	.attr("y", height + margin.bottom - 45 - 10)
