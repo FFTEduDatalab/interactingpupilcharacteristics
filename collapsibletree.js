@@ -324,17 +324,6 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			};
 		});
 
-	var nodeTally={}
-
-	nodes.forEach(function(d) {
-		if (nodeTally[d.depth]==null) {
-			nodeTally[d.depth]=1;
-		}
-		else {
-			nodeTally[d.depth]+=1
-		};
-	});
-
 	nodeStart.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
 		.style("stroke", function(d) {
@@ -348,6 +337,10 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.on("click", toggleDescendants);	// passes details of node to click function
 
 	nodeStart.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
+		.attr("class", "nodeLabel")
+		.attr("data-depth", function(d) {				// text labels don't have d.depth, so data-depth is added so that depth can be accessed when working with text labels
+			return d.depth;
+		})
 		.text(function(d) {
 			return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
 		})
@@ -369,6 +362,34 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.style("fill-opacity", 1e-6);
+
+	var labels=d3.selectAll("text.nodeLabel")[0]		// selects the actual text elements
+
+	var requiredSpacing={}
+
+	labels.forEach(function(d) {
+		if (requiredSpacing[d.getAttribute("data-depth")]==null) {
+			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5)*2;		// doubled, as a worst case scenario
+		}
+		else if ((Math.ceil(d.getComputedTextLength()/5)*5)*2>requiredSpacing[d.getAttribute("data-depth")]) {
+			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5)*2;
+		}
+	});
+
+	var minSpacing={}
+
+	nodes.forEach(function(d) {
+		nodes.forEach(function(e) {
+			if (d.depth==e.depth && d.id!=e.id && d.parent!=e.parent && d.position!=e.position) {		// if labels are positioned on the same side then they won't crash into one another; ditto if they share a parent
+				if (minSpacing[d.depth]==null) {
+					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
+				}
+				else if (Math.abs(d.x-e.x)<minSpacing[d.depth]) {
+					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
+				}
+			}
+		})
+	});
 
 	var nodePositioned=node.transition()
 		.duration(function() {
@@ -396,14 +417,22 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		});
 
 	nodePositioned.select("text")
-		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned - meaning that for node text (only) it handles removal as well as addition
-			if (nodeTally[d.depth]<10){
-				return 1;
-			}
-			else {
+		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned from what it started out as - meaning that for node text (only) it handles removal as well as addition
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]){
 				return 1e-6;
 			}
+			else {
+				return 1;
+			}
 		})
+		.attr("class", function(d) {		// done in hacky fashion because classed wasn't working here
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]) {
+				return "nodeLabel nonselectable";
+			}
+			else {
+				return "nodeLabel";
+			}
+		});
 
 	var nodeRemoved=node.exit()
 		.transition()
@@ -480,7 +509,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 function toggleDescendants(d) {
 	clickCount+=1
-	if (clickCount>=4) {
+	if (clickCount>=-1) {		// XXX
+	// if (clickCount>=5) {
 		svg.selectAll(".button").selectAll("*")
 			.attr("visibility","visible")
 	}
