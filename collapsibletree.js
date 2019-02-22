@@ -1,5 +1,5 @@
-var margin={top: 120, right: 20, bottom: 120, left: 20},
-	width=1000 - margin.right - margin.left,
+var margin={top: 120, right: 140, bottom: 120, left: 20},
+	width=1140 - margin.right - margin.left,
 	height=730 - margin.top - margin.bottom;
 
 var loaded=0,
@@ -120,7 +120,7 @@ var quantize=d3.scale.quantize()		// domain and range are set as part of loading
 
 svg.append("g")
 	.attr("class", "legendQuant")
-	.attr("transform", "translate(" + (width - 120) + ",-30)");		// for alignment with the top of first node (r=30)
+	.attr("transform", "translate(" + width + ",-30)");		// for alignment with the top of first node (r=30)
 
 var legend=d3.legend.color()
 	.shapeWidth(30)
@@ -184,7 +184,7 @@ svg.append("text")
 
 svg.append("a")
 	.attr("href", "interactingpupilcharacteristics.xlsx")
-	.attr("target","blank")			// fends off a console error relating to downloading
+	.attr("target","blank")			// fends off error relating to downloading
 	.append("text")
 	.attr("class", "notes url")
 	.attr("x", 312)
@@ -367,6 +367,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	var labels=d3.selectAll("text.nodeLabel")[0]		// selects the actual text elements
 
+	requiredSpacing={}
+
 	labels.forEach(function(d) {
 		if (requiredSpacing[d.getAttribute("data-depth")]==null) {
 			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
@@ -375,6 +377,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5);
 		}
 	});
+
+	minSpacing={}
 
 	nodes.forEach(function(d) {
 		nodes.forEach(function(e) {
@@ -416,7 +420,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodePositioned.select("text")
 		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned from what it started out as - meaning that for node text (only) it handles removal as well as addition
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left || Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width){
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
 				return 1e-6;
 			}
 			else {
@@ -424,7 +428,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr("class", function(d) {
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left || Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width){
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {
 				return "nodeLabel nonselectable";				// done in hacky fashion because classed wasn't working here
 			}
 			else {
