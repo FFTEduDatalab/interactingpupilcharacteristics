@@ -8,6 +8,8 @@ var loaded=0,
 	buckets,
 	bucketWidth,
 	duration=1250,
+	requiredSpacing={},
+	minSpacing={},
 	root;
 
 var buckets={
@@ -365,18 +367,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	var labels=d3.selectAll("text.nodeLabel")[0]		// selects the actual text elements
 
-	var requiredSpacing={}
-
 	labels.forEach(function(d) {
 		if (requiredSpacing[d.getAttribute("data-depth")]==null) {
 			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
 		}
-		else if ((Math.ceil(d.getComputedTextLength()/5)*5)*2>requiredSpacing[d.getAttribute("data-depth")]) {
-			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
+		else if ((Math.ceil(d.getComputedTextLength()/5)*5)>requiredSpacing[d.getAttribute("data-depth")]) {
+			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5);
 		}
 	});
-
-	var minSpacing={}
 
 	nodes.forEach(function(d) {
 		nodes.forEach(function(e) {
