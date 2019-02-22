@@ -369,10 +369,10 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	labels.forEach(function(d) {
 		if (requiredSpacing[d.getAttribute("data-depth")]==null) {
-			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5)*2;		// doubled, as a worst case scenario
+			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
 		}
 		else if ((Math.ceil(d.getComputedTextLength()/5)*5)*2>requiredSpacing[d.getAttribute("data-depth")]) {
-			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5)*2;
+			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
 		}
 	});
 
@@ -380,7 +380,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodes.forEach(function(d) {
 		nodes.forEach(function(e) {
-			if (d.depth==e.depth && d.id!=e.id && d.parent!=e.parent && d.position!=e.position) {		// if labels are positioned on the same side then they won't crash into one another; ditto if they share a parent
+			if ((d.depth==e.depth && d.parent!=e.parent && d.position!=e.position) || (d.depth==e.depth && d.parent==e.parent && d.position==e.position && d.id!=e.id)) {		// if labels are positioned on the same side or they share a parent they won't crash into one another, unless a node has more than one sibling in which case they can
 				if (minSpacing[d.depth]==null) {
 					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
 				}
@@ -418,16 +418,16 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodePositioned.select("text")
 		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned from what it started out as - meaning that for node text (only) it handles removal as well as addition
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]){
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left || Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width){
 				return 1e-6;
 			}
 			else {
 				return 1;
 			}
 		})
-		.attr("class", function(d) {		// done in hacky fashion because classed wasn't working here
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]) {
-				return "nodeLabel nonselectable";
+		.attr("class", function(d) {
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left || Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width){
+				return "nodeLabel nonselectable";				// done in hacky fashion because classed wasn't working here
 			}
 			else {
 				return "nodeLabel";
