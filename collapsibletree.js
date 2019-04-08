@@ -12,13 +12,21 @@ var loaded=0,
 	minSpacing={},
 	root;
 
-var buckets={
+var buckets={		// XXX
+	"ks2att":7,
+	"ks2readprog":7,
+	"ks2writprog":7,
+	"ks2matprog":7,
 	"ks4att":7,
 	"ks4prog":9,
 	"ks4basics":7
 }
 
-var bucketWidths={
+var bucketWidths={		// XXX
+	"ks2att":5,
+	"ks2readprog":5,
+	"ks2writprog":5,
+	"ks2matprog":5,
 	"ks4att":5,
 	"ks4prog":0.2,
 	"ks4basics":10
@@ -58,7 +66,9 @@ var colorLookup={
 
 var titleSubheads={
 	"ks2att":"Pupils reaching the expected standard in KS2 reading, writing and maths, 2017 (%)",
-	"ks2prog":"Average combined pupil progress score in KS2 reading, writing and maths, 2017",
+	"ks2readprog":"Average pupil progress score in KS2 reading, 2017",
+	"ks2writprog":"Average pupil progress score in KS2 writing, 2017",
+	"ks2matprog":"Average pupil progress score in KS2 maths, 2017",
 	"ks4att":"Average pupil Attainment 8 score, 2017",
 	"ks4prog":"Average pupil Progress 8 score, 2017",
 	"ks4basics":"Pupils achieving a standard pass or better (grade 4+) in English and maths GCSEs, 2017 (%)"
@@ -80,9 +90,11 @@ var sec=
 
 function updateControls(value) {
 	if (value=='primary') {
+		loadDataset('ks2att')
 		return document.getElementById("measureControls").innerHTML=prim;
 	}
 	else if (value=='secondary') {
+		loadDataset('ks4basics')
 		return document.getElementById("measureControls").innerHTML=sec;
 	}
 }
@@ -216,7 +228,7 @@ function loadDataset(value) {
 			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// d3 v4. See https://github.com/d3/d3-interpolate#quantize
 
 		legend.labelFormat(function(d) {
-			if (value=="ks4basics") {
+			if (value=="ks2att" || "ks4basics") {
 				return d3.format(".0f")(d) + "%";
 			}
 			else {
@@ -227,7 +239,7 @@ function loadDataset(value) {
 		svg.select(".legendQuant")
 			.call(legend);
 
-		tip.html(function(d) {
+		tip.html(function(d) {			// XXX
 			if (value=='ks4basics' && d.name=='all') {
 				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
@@ -291,7 +303,7 @@ function loadDataset(value) {
 	});
 }
 
-loadDataset("ks4basics")
+loadDataset("ks2att")
 
 d3.select(self.frameElement).style("height", "500px");
 
