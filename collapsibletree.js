@@ -170,7 +170,7 @@ svg.append("text")
 svg.append("text")
 	.attr("class", "notes")
 	.attr("y", height + margin.bottom - 30)
-	.text("Pupils in state-funded establishments. Coastal is defined as attending a school with 10km of the coast.");
+	.text("Pupils in state-funded establishments. Coastal is defined as attending a school with 5.5km of the coast.");
 
 svg.append("text")
 	.attr("class", "notes")
