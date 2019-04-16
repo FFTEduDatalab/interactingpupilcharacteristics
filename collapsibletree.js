@@ -75,10 +75,14 @@ var titleSubheads={
 }
 
 var prim=
-	'<input type="radio" id="measure_2" name="switch2" value="ks2prog" onchange="loadDataset(value)"/>\
-	<label for="measure_2">KS2 progress</label>\
+	'<input type="radio" id="measure_4" name="switch2" value="ks2matprog" onchange="loadDataset(value)"/>\
+	<label for="measure_4">Maths progress</label>\
+	<input type="radio" id="measure_3" name="switch2" value="ks2writprog" onchange="loadDataset(value)"/>\
+	<label for="measure_3">Writing progress</label>\
+	<input type="radio" id="measure_2" name="switch2" value="ks2readprog" onchange="loadDataset(value)"/>\
+	<label for="measure_2">Reading progress</label>\
 	<input type="radio" id="measure_1" name="switch2" value="ks2att" onchange="loadDataset(value)" checked/>\
-	<label for="measure_1">KS2 attainment</label>'
+	<label for="measure_1">RWM attainment</label>'
 
 var sec=
 	'<input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/>\
@@ -91,11 +95,11 @@ var sec=
 function updateControls(value) {
 	if (value=='primary') {
 		loadDataset('ks2att')
-		return document.getElementById("measureControls").innerHTML=prim;
+		return document.getElementById("measure-controls").innerHTML=prim;
 	}
 	else if (value=='secondary') {
 		loadDataset('ks4basics')
-		return document.getElementById("measureControls").innerHTML=sec;
+		return document.getElementById("measure-controls").innerHTML=sec;
 	}
 }
 
@@ -239,8 +243,32 @@ function loadDataset(value) {
 		svg.select(".legendQuant")
 			.call(legend);
 
-		tip.html(function(d) {			// XXX
-			if (value=='ks4basics' && d.name=='all') {
+		tip.html(function(d) {
+			if (value=='ks2att' && d.name=='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2att' && d.name!='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>" + d.tooltipText + "</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2readprog' && d.name=='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2readprog' && d.name!='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2writprog' && d.name=='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2writprog' && d.name!='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2matprog' && d.name=='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks2matprog' && d.name!='all') {
+				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			}
+			else if (value=='ks4basics' && d.name=='all') {
 				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4basics' && d.name!='all') {
@@ -302,8 +330,6 @@ function loadDataset(value) {
 		draw(root);
 	});
 }
-
-loadDataset("ks2att")
 
 d3.select(self.frameElement).style("height", "500px");
 
