@@ -246,17 +246,14 @@ svg.append("a")
 svg.call(tip);		// invoke the tip in the context of viz
 
 function loadDataset(value) {
-	loaded=0
 
 	var jsonFile=value + ".json"
 
 	d3.json(jsonFile, function(error, json) {
 
 		bucketWidth=bucketWidths[value]
-
 		quantize.domain([Math.floor(d3.min(json, function(d) { return d.value; })/bucketWidth)*bucketWidth,Math.ceil(d3.max(json, function(d) { return d.value; })/bucketWidth)*bucketWidth])
 			.range(colorLookup[buckets[value]]);
-			// .range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))		// d3 v4. See https://github.com/d3/d3-interpolate#quantize
 
 		legend.labelFormat(function(d) {
 			if (value=="ks2att" || value=="ks4basics") {
@@ -354,12 +351,18 @@ function loadDataset(value) {
 			.attr("y", -70)
 			.text(titleSubheads[value]);
 
-		draw(root);
 		document.getElementById("measure-description-text").innerHTML=helpTooltips[value]
+
+		if (svg.selectAll("g.node")[0].length>1) {		// collapse tree, but only where more than one node exists
+			toggleDescendants(root);
+		}
+		else {
+			loaded=0		// start tree off collapsed
+			draw(root);
+		}
+
 	});
 }
-
-d3.select(self.frameElement).style("height", "500px");
 
 function draw(source) {		// function to draw nodes and links - either used on the entire dataset, or data relating to a particular node that has been clicked on
 
@@ -581,7 +584,6 @@ function toggleDescendants(d) {
 		svg.selectAll(".button").selectAll("*")
 			.attr("visibility","visible")
 	}
-
 	if (d.children) {
 		collapseDescendants(d);
 	}
