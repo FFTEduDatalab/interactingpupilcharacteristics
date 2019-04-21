@@ -240,10 +240,10 @@ function loadDataset(value) {
 
 		tip.html(function(d) {
 			if (value=='ks2att' && d.data.name=='all') {
-				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>pupils nationally</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*1000/10 + "% of <b>pupils nationally</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks2att' && d.data.name!='all') {
-				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>" + d.data.tooltipText + "</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*1000/10 + "% of <b>" + d.data.tooltipText + "</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks2readprog' && d.data.name=='all') {
 				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
@@ -264,10 +264,10 @@ function loadDataset(value) {
 				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4basics' && d.data.name=='all') {
-				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*1000/10 + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4basics' && d.data.name!='all') {
-				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>" + d.data.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*1000/10 + "% of <b>" + d.data.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 			else if (value=='ks4att' && d.data.name=='all') {
 				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
