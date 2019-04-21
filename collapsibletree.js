@@ -12,24 +12,24 @@ var loaded=0,
 	minSpacing={},
 	root;
 
-var buckets={		// XXX
-	"ks2att":7,
-	"ks2readprog":7,
-	"ks2writprog":7,
-	"ks2matprog":7,
+var buckets={
+	"ks2att":7,		// XXX
+	"ks2readprog":7,		// XXX
+	"ks2writprog":7,		// XXX
+	"ks2matprog":7,		// XXX
+	"ks4basics":7,
 	"ks4att":7,
-	"ks4prog":9,
-	"ks4basics":7
+	"ks4prog":8
 }
 
-var bucketWidths={		// XXX
-	"ks2att":5,
-	"ks2readprog":5,
-	"ks2writprog":5,
-	"ks2matprog":5,
+var bucketWidths={
+	"ks2att":0.1,		// XXX
+	"ks2readprog":5,		// XXX
+	"ks2writprog":5,		// XXX
+	"ks2matprog":5,		// XXX
+	"ks4basics":0.1,
 	"ks4att":5,
-	"ks4prog":0.2,
-	"ks4basics":10
+	"ks4prog":0.2
 }
 
 var radiuses={
@@ -39,29 +39,6 @@ var radiuses={
 	3:5,
 	4:3,
 	5:2.5
-}
-
-var colorLookup={
-	7:[
-		"rgb(230,0,126)",
-		"rgb(199,28,143)",
-		"rgb(168,57,159)",
-		"rgb(138,85,176)",
-		"rgb(107,113,192)",
-		"rgb(76,142,209)",
-		"rgb(45,170,225)"
-	],
-	9:[
-		"rgb(230,0,126)",
-		"rgb(207,21,138)",
-		"rgb(184,43,151)",
-		"rgb(161,64,163)",
-		"rgb(138,85,176)",
-		"rgb(114,106,188)",
-		"rgb(91,128,200)",
-		"rgb(68,149,213)",
-		"rgb(45,170,225)"
-	]
 }
 
 var titleSubheads={
@@ -123,19 +100,11 @@ function updateControls(value) {
 
 updateControls('primary')
 
-var tree=d3.layout.tree()
+var tree = d3.tree()
 	.size([width, height])
 	.separation(function(a, b) {
-		if (a.depth!=0) {
-			return (a.parent == b.parent ? 1 : 2) / a.depth;
-		}
-		else {
-			return 1
-		}
+		return (a.parent == b.parent ? 1 : 2) / a.depth;
 	});
-
-var diagonal=d3.svg.diagonal()		// function that will be used to draw the links between the nodes
-	.projection(function(d) { return [d.x, d.y]; });
 
 var tip=d3.tip()		// initialise d3 tooltip
 	.attr('class', 'd3-tip')
@@ -158,15 +127,16 @@ var svg=d3.select(".vis")
 	.append("g")		// creates a group element that will contain all objects within the SVG
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var quantize=d3.scale.quantize()		// domain and range are set as part of loading dataset
+var quantize=d3.scaleQuantize()		// domain and range are set as part of loading dataset
 
 svg.append("g")
 	.attr("class", "legendQuant")
 	.attr("transform", "translate(" + width + ",-30)");		// for alignment with the top of first node (r=30)
 
-var legend=d3.legend.color()
+var legend=d3.legendColor()		// https://d3-legend.susielu.com/
 	.shapeWidth(30)
 	.orient('vertical')
+	.shapePadding(-2)
 	.scale(quantize);
 
 svg.append("g")
@@ -249,66 +219,67 @@ function loadDataset(value) {
 
 	var jsonFile=value + ".json"
 
-	d3.json(jsonFile, function(error, json) {
+	d3.json(jsonFile).then(function(json) {
 
 		bucketWidth=bucketWidths[value]
 		quantize.domain([Math.floor(d3.min(json, function(d) { return d.value; })/bucketWidth)*bucketWidth,Math.ceil(d3.max(json, function(d) { return d.value; })/bucketWidth)*bucketWidth])
-			.range(colorLookup[buckets[value]]);
+			.range(d3.quantize(d3.interpolate("rgb(230,0,126)", "rgb(45,170,225)"), buckets[value]))
 
-		legend.labelFormat(function(d) {
-			if (value=="ks2att" || value=="ks4basics") {
-				return d3.format(".0f")(d) + "%";
-			}
-			else {
-				return d3.format(".1f")(d);
-			}
-		});
+		if (value=="ks2att" || value=="ks4basics") {
+			legend.labelFormat(d3.format(".0%"))
+		}
+		else if (value=="ks4att") {
+			legend.labelFormat(d3.format(".1f"))
+		}
+		else {
+			legend.labelFormat(d3.format(".2f"))
+		};
 
 		svg.select(".legendQuant")
 			.call(legend);
 
 		tip.html(function(d) {
-			if (value=='ks2att' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			if (value=='ks2att' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>pupils nationally</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2att' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>" + d.tooltipText + "</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2att' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>" + d.data.tooltipText + "</b> reached the expected standing in KS2 reading, writing and maths in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2readprog' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2readprog' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2readprog' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2readprog' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average KS2 reading progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2writprog' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2writprog' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2writprog' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2writprog' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average KS2 writing progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2matprog' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2matprog' && d.datadata.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks2matprog' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks2matprog' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average KS2 maths progress score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4basics' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4basics' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>pupils nationally</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4basics' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p>A total of " + d.value + "% of <b>" + d.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4basics' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p>A total of " + d.value*100 + "% of <b>" + d.data.tooltipText + "</b> achieved the basics measure in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4att' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4att' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4att' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4att' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average Attainment 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4prog' && d.name=='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>Nationally</b>, pupils achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4prog' && d.data.name=='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>Nationally</b>, pupils achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
-			else if (value=='ks4prog' && d.name!='all') {
-				return "<p class='tooltip-header'>" + d.header + "</p><p><b>" + d.tooltipText + "</b> achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.pupils.toLocaleString() + " pupils</p>"
+			else if (value=='ks4prog' && d.data.name!='all') {
+				return "<p class='tooltip-header'>" + d.data.header + "</p><p><b>" + d.data.tooltipText + "</b> achieved an average Progress 8 score of " + d.value + " in 2017." + "</p><p class='tooltip-pupils'>" + d.data.pupils.toLocaleString() + " pupils</p>"
 			}
 		});
 
@@ -317,7 +288,7 @@ function loadDataset(value) {
 			return map;
 		}, {});
 
-		var treeData=[];
+		var jsonData=[];
 
 		json.forEach(function(node) {
 			var parent=dataMap[node.parent];
@@ -325,12 +296,11 @@ function loadDataset(value) {
 				(parent.children || (parent.children = []))
 				.push(node);
 			} else {
-				treeData.push(node);
+				jsonData.push(node);
 			}
 		});
 
-		root=treeData[0]
-
+		root = d3.hierarchy(jsonData[0], function(d) { return d.children; });
 		root.x0=width/2		// i.e. middle of the svg, taking into account svg margin
 		root.y0=0		// i.e. top of the svg, taking into account svg margin
 
@@ -353,7 +323,7 @@ function loadDataset(value) {
 
 		document.getElementById("measure-description-text").innerHTML=helpTooltips[value]
 
-		if (svg.selectAll("g.node")[0].length>1) {		// collapse tree, but only where more than one node exists
+		if (document.getElementsByClassName("node").length>1) {
 			toggleDescendants(root);
 		}
 		else {
@@ -370,8 +340,9 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		collapseDescendants(root);
 	}
 
-	var nodes=tree.nodes(root).reverse(),		// define nodes using previously defined tree function
-		links=tree.links(nodes);		// define links based on newly defined nodes using previously defined tree function
+	var treeData = tree(root),
+		nodes = treeData.descendants(),
+		links = treeData.descendants().slice(1);
 
 	nodes.forEach(function(d) { d.y=d.depth * 100; });		// set node depth
 
@@ -380,7 +351,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			return d.id || (d.id = ++i);
 		});
 
-	var nodeStart=node.enter()		// joins data to elements
+	var nodeEnter=node.enter()		// joins data to elements
 		.append("g")		// appended as a group
 		.attr("class", "node")
 		.classed("nochild", function(d) {		// conditionally adds an additional class (.attr can't be used to add additional classes)
@@ -395,7 +366,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			};
 		});
 
-	nodeStart.append("circle")		// add a circle in each node g we have added
+	nodeEnter.append("circle")		// add a circle in each node g we have added
 		.attr("r", 1e-6)
 		.style("stroke", function(d) {
 			return quantize(d.value)
@@ -407,51 +378,51 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.on('mouseout', tip.hide)
 		.on("click", toggleDescendants);	// passes details of node to click function
 
-	nodeStart.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
+	nodeEnter.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.attr("class", "nodeLabel")
 		.attr("data-depth", function(d) {				// text labels don't have d.depth, so data-depth is added so that depth can be accessed when working with text labels
 			return d.depth;
 		})
 		.text(function(d) {
-			return d.header[0].toUpperCase() + d.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
+			return d.data.header[0].toUpperCase() + d.data.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
 		})
 		.attr("x", function(d) {
-			if (d.position=='left') {
+			if (d.data.position=='left') {
 				return -1*(radiuses[d.depth]+4);
 			}
-			else if (d.position=='right') {
+			else if (d.data.position=='right') {
 				return (radiuses[d.depth]+4);
 			}
 		})
 		.attr("dy", ".35em")		// bumps the text down to align with the centre of each node
 		.attr("text-anchor", function(d) {
-			if (d.position=='left') {
+			if (d.data.position=='left') {
 				return "end";
 			}
-			else if (d.position=='right') {
+			else if (d.data.position=='right') {
 				return "start";
 			}
 		})
 		.style("fill-opacity", 1e-6);
 
-	var labels=d3.selectAll("text.nodeLabel")[0]		// selects the actual text elements
+	var labels=document.getElementsByClassName("nodeLabel")
 
 	requiredSpacing={}
 
-	labels.forEach(function(d) {
-		if (requiredSpacing[d.getAttribute("data-depth")]==null) {
-			requiredSpacing[d.getAttribute("data-depth")]=Math.ceil(d.getComputedTextLength()/5)*5;
+	for (let label of labels) {
+		if (requiredSpacing[label.getAttribute("data-depth")]==null) {
+			requiredSpacing[label.getAttribute("data-depth")]=Math.ceil(label.getComputedTextLength()/5)*5;
 		}
-		else if ((Math.ceil(d.getComputedTextLength()/5)*5)>requiredSpacing[d.getAttribute("data-depth")]) {
-			requiredSpacing[d.getAttribute("data-depth")]=(Math.ceil(d.getComputedTextLength()/5)*5);
+		else if ((Math.ceil(label.getComputedTextLength()/5)*5)>requiredSpacing[label.getAttribute("data-depth")]) {
+			requiredSpacing[label.getAttribute("data-depth")]=(Math.ceil(label.getComputedTextLength()/5)*5);
 		}
-	});
+	};
 
 	minSpacing={}
 
 	nodes.forEach(function(d) {
 		nodes.forEach(function(e) {
-			if ((d.depth==e.depth && d.parent!=e.parent && d.position!=e.position) || (d.depth==e.depth && d.parent==e.parent && d.position==e.position && d.id!=e.id)) {		// if labels are positioned on the same side or they share a parent they won't crash into one another, unless a node has more than one sibling in which case they can
+			if ((d.depth==e.depth && d.parent!=e.parent && d.data.position!=e.data.position) || (d.depth==e.depth && d.parent==e.parent && d.data.position==e.data.position && d.id!=e.id)) {		// if labels are positioned on the same side or they share a parent they won't crash into one another, unless a node has more than one sibling in which case they can
 				if (minSpacing[d.depth]==null) {
 					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
 				}
@@ -462,7 +433,8 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		})
 	});
 
-	var nodePositioned=node.transition()
+	var nodeUpdate=nodeEnter.merge(node)		// explicitly merge new nodes in, so we're operating on all links (as from d3 v4 forward entering elements are not implicitly incuded in the update selection)
+		.transition()
 		.duration(function() {
 			if (loaded==0) {
 				return 0;		// no transition on initial load
@@ -475,7 +447,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			return "translate(" + d.x + "," + d.y + ")";			// new position of each node
 		});
 
-	nodePositioned.select("circle")
+	nodeUpdate.select("circle")
 		.attr("r", function(d) {
 			return radiuses[d.depth];
 		})
@@ -487,9 +459,9 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		});
 
-	nodePositioned.select("text")
-		.style("fill-opacity", function(d) {		// this changes the behaviour of nodePositioned from what it started out as - meaning that for node text (only) it handles removal as well as addition
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
+	nodeUpdate.select("text")
+		.style("fill-opacity", function(d) {		// this changes the behaviour of nodeUpdate from what it started out as - meaning that for node text (only) it handles removal as well as addition
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.data.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
 				return 1e-6;
 			}
 			else {
@@ -497,7 +469,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr("class", function(d) {
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {
+			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.data.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {
 				return "nodeLabel nonselectable";				// done in hacky fashion because classed wasn't working here
 			}
 			else {
@@ -505,7 +477,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		});
 
-	var nodeRemoved=node.exit()
+	var nodeExit=node.exit()
 		.transition()
 		.duration(function() {
 			if (loaded==0) {
@@ -516,45 +488,34 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr("transform", function(d) {
-			return "translate(" + source.x + "," + source.y + ")";				// new position of active node
+			return "translate(" + source.x + "," + source.y + ")";
 		})
 		.remove();
 
-	nodeRemoved.select("circle")
+	nodeExit.select("circle")
 		.attr("r", 1e-6);
 
-	nodeRemoved.select("text")
+	nodeExit.select("text")
 		.style("fill-opacity", 1e-6);
 
 	var link=svg.selectAll("path.link")		// define function that adds each link that is required
-		.data(links, function(d) { return d.target.id; });
+		.data(links, function(d) { return d.id; });
 
-	link.enter()
+	var linkEnter=link.enter()
 		.insert("path", "g")
 		.attr("class", "link")
 		.attr("d", function(d) {
-			if (source.xf!=null) {		// where expand all button is used, the position which nodes are in before the expansion starts are used as the starting point
-				var o = {x: source.xf, y: source.yf};
-				return diagonal({source: o, target: o});
+			if (source.xf!=null) {
+				var o = {x: source.xf, y: source.yf};		// where expand all button is used, the position which nodes are in before the expansion starts are used as the starting point
+				return diagonal(o, o);
  			}
 			else {
-				var o = {x: source.x0, y: source.y0};
-				return diagonal({source: o, target: o});
+				var o = {x: source.x0, y: source.y0};				// position of the clicked node, whether or not that is the parent
+				return diagonal(o, o);
 			}
 		});
 
-	link.transition()
-		.duration(function() {
-			if (loaded==0) {
-				return 0;		// no transition on initial load
-			}
-			else {
-				return duration;
-			}
-		})
-		.attr("d", diagonal);
-
-	link.exit()
+	var linkUpdate = linkEnter.merge(link)		// explicitly merge new links in, so we're operating on all links (as from d3 v4 forward entering elements are not implicitly incuded in the update selection)
 		.transition()
 		.duration(function() {
 			if (loaded==0) {
@@ -564,9 +525,23 @@ function draw(source) {		// function to draw nodes and links - either used on th
 				return duration;
 			}
 		})
-		.attr("d", function(d) {
-			var o = {x: source.x, y: source.y};		// new position of active node
-			return diagonal({source: o, target: o});
+		.attr("d", function(d){
+			return diagonal(d, d.parent)
+		});
+
+	var linkExit = link.exit()
+		.transition()
+		.duration(function() {
+			if (loaded==0) {
+				return 0;		// no transition on initial load
+			}
+			else {
+				return duration;
+			}
+		})
+		.attr('d', function(d) {
+			var o = {x: source.x, y: source.y}		// position of the clicked node, whether or not that is the parent
+			return diagonal(o, o)
 		})
 		.remove();
 
@@ -577,6 +552,13 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	loaded=1
 };
+
+function diagonal(p, c) {
+    return "M" + p.x + "," + p.y
+        + " C" + p.x + "," + (p.y + c.y) / 2
+		+ " " + c.x + "," + (p.y + c.y) / 2
+		+ " " + c.x + "," + c.y;
+}
 
 function toggleDescendants(d) {
 	clickCount+=1
