@@ -37,8 +37,8 @@ var radiuses={
 	1:20,
 	2:10,
 	3:5,
-	4:5,
-	5:5
+	4:3,
+	5:2.5
 }
 
 var colorLookup={
@@ -124,7 +124,15 @@ function updateControls(value) {
 updateControls('primary')
 
 var tree=d3.layout.tree()
-	.size([width, height]);
+	.size([width, height])
+	.separation(function(a, b) {
+		if (a.depth!=0) {
+			return (a.parent == b.parent ? 1 : 2) / a.depth;
+		}
+		else {
+			return 1
+		}
+	});
 
 var diagonal=d3.svg.diagonal()		// function that will be used to draw the links between the nodes
 	.projection(function(d) { return [d.x, d.y]; });
