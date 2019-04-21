@@ -87,21 +87,44 @@ svg .button text {
 
 .controls .switch-controls {
 	display: inline-block;
-	width: 50%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    -o-user-select: none;
+    -moz-user-select: none;
 }
 
-.controls #measureControls {
+.controls #phase-controls {
+	width: 260px;
+}
+
+.controls #help-controls {
+	vertical-align: top;
+	height: 34px;
+}
+
+.controls #help-controls.prim {
+	width: 360px;
+}
+
+.controls #help-controls.sec {
+	width: 490px;
+}
+
+.controls #measure-controls.prim {
 	text-align: right;
 }
 
-.switch-controls {
-	padding-top: 10px;
-	padding-bottom: 10px;
-	overflow: hidden;
+.controls #measure-controls.prim {
+	width: 520px;
 }
 
-.switch-title {
-	margin-bottom: 6px;
+.controls #measure-controls.sec {
+	width: 390px;
 }
 
 .switch-controls input {
@@ -114,8 +137,8 @@ svg .button text {
 }
 
 .switch-controls label {
-	display: inline-block;
 	width: 100px;
+	height: 20px;
 	background-color: #f3f3f3;
 	text-align: center;
 	padding: 6px 14px;
@@ -127,11 +150,11 @@ svg .button text {
 	transition:         all 0.1s ease-in-out;
 }
 
-.switch-controls#phaseControls label {
+.controls #phase-controls label {
 	float: left;
 }
 
-.switch-controls#measureControls label {
+.controls #measure-controls label {
 	float: right;
 }
 
@@ -145,23 +168,71 @@ svg .button text {
 	box-shadow: none;
 }
 
-.switch-controls#phaseControls label:first-of-type,
-.switch-controls#measureControls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
+.switch-controls#phase-controls label:first-of-type,
+.switch-controls#measure-controls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
 	border-radius: 4px 0 0 4px;
 }
 
-.switch-controls#phaseControls label:last-of-type,
-.switch-controls#measureControls label:first-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
+.switch-controls#phase-controls label:last-of-type,
+.switch-controls#measure-controls label:first-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
 	border-radius: 0 4px 4px 0;
 }
 
-button {
-	float: left;
-	display: inline-block;
-	border-radius: 4px 4px 4px 4px;
-	background-color: #f3f3f3;
+.switch-controls .help-icon {		/* for text alignment with input labels */
+	position: relative;
+	top: 10px;
+	cursor: pointer;
+}
+
+.switch-controls.prim .help-icon {
+	left: 330px;
+}
+
+.switch-controls.sec .help-icon {
+	left: 460px;
+}
+
+.switch-controls .help-icon i {
+	line-height: 0px;
+}
+
+.switch-controls .help-icon:hover .tooltip {
+	visibility: visible;
+}
+
+.switch-controls .fa-question-circle {
+	color: #535353;
+	font-size: 20px;
+}
+
+.tooltip {
+	visibility: hidden;
+	background-color: #535353;
 	text-align: center;
-	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 6px;
+	padding: 5px;
+	width: 280px;
+	position: absolute;
+	z-index: 1;
+	top: -10px;
+	right: 24px;
+	cursor: default;
+	white-space: normal;
+}
+
+.tooltip #measure-description-text {
+	color: white;
+}
+
+.tooltip ::after {
+	content: "";
+	position: absolute;
+	top: 17px;
+	left: 100%;
+	margin-top: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent transparent transparent #535353;
 }
 
 /* SVG text*/

@@ -74,6 +74,16 @@ var titleSubheads={
 	"ks4basics":"Pupils achieving a standard pass or better (grade 4+) in English and maths GCSEs, 2017 (%)"
 }
 
+var helpTooltips={
+	"ks2att":"This metric measures the proportion of pupils reaching the government's expected standard in reading, writing and maths at age 11.",
+	"ks2readprog":"This metric measures the progress made by pupils in reading between the ages of seven and 11.",
+	"ks2writprog":"This metric measures the progress made by pupils in writing between the ages of seven and 11.",
+	"ks2matprog":"This metric measures the progress made by pupils in maths between the ages of seven and 11.",
+	"ks4att":"Attainment 8 is one of the government’s headline accountability measures for secondary schools. It measures pupils’ attainment across eight subjects.",
+	"ks4prog":"Progress 8 is one of the government’s headline accountability measures for secondary schools. It measures the progress that pupils make between the ages of 11 and 16, comparing pupils’ attainment across eight subjects with that of other pupils who had the same attainment at age 11.",
+	"ks4basics":"<em>Basics</em> measures the proportion of pupils achieving a standard pass or better (grade 4+) in English and maths GCSEs."
+}
+
 var prim=
 	'<input type="radio" id="measure_4" name="switch2" value="ks2matprog" onchange="loadDataset(value)"/>\
 	<label for="measure_4">Maths progress</label>\
@@ -95,10 +105,18 @@ var sec=
 function updateControls(value) {
 	if (value=='primary') {
 		loadDataset('ks2att')
+		document.getElementById("help-controls").classList.remove("sec")
+		document.getElementById("help-controls").classList.add("prim")
+		document.getElementById("measure-controls").classList.remove("sec")
+		document.getElementById("measure-controls").classList.add("prim")
 		return document.getElementById("measure-controls").innerHTML=prim;
 	}
 	else if (value=='secondary') {
 		loadDataset('ks4basics')
+		document.getElementById("help-controls").classList.remove("prim")
+		document.getElementById("help-controls").classList.add("sec")
+		document.getElementById("measure-controls").classList.remove("prim")
+		document.getElementById("measure-controls").classList.add("sec")
 		return document.getElementById("measure-controls").innerHTML=sec;
 	}
 }
@@ -205,7 +223,7 @@ svg.append("a")
 	.attr("class", "notes url")
 	.attr("x", 312)
 	.attr("y", height + margin.bottom - 10)
-	.attr("href", "interactingpupilcharacteristics.xlsx")
+	.attr("href", "interactingpupilcharacteristics.xlsx")		// XXX
 	.text("Download the data");
 
 svg.append("a")
@@ -221,6 +239,7 @@ svg.call(tip);		// invoke the tip in the context of viz
 
 function loadDataset(value) {
 	loaded=0
+
 	var jsonFile=value + ".json"
 
 	d3.json(jsonFile, function(error, json) {
@@ -238,7 +257,7 @@ function loadDataset(value) {
 			else {
 				return d3.format(".1f")(d);
 			}
-		})
+		});
 
 		svg.select(".legendQuant")
 			.call(legend);
@@ -328,6 +347,7 @@ function loadDataset(value) {
 			.text(titleSubheads[value]);
 
 		draw(root);
+		document.getElementById("measure-description-text").innerHTML=helpTooltips[value]
 	});
 }
 
@@ -441,7 +461,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr("transform", function(d) {
-			return "translate(" + d.x + "," + d.y + ")";				// new position of each node
+			return "translate(" + d.x + "," + d.y + ")";			// new position of each node
 		});
 
 	nodePositioned.select("circle")
@@ -550,7 +570,6 @@ function draw(source) {		// function to draw nodes and links - either used on th
 function toggleDescendants(d) {
 	clickCount+=1
 	if (clickCount>=-1) {		// XXX
-	// if (clickCount>=5) {
 		svg.selectAll(".button").selectAll("*")
 			.attr("visibility","visible")
 	}
