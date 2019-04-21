@@ -13,10 +13,6 @@
 	fill: #f3f3f3 !important;		/* XXX */
 }
 
-.node.nochild circle {
-	cursor: default;
-}
-
 body, button {
 	font-size: 14px;
 	color: rgba(0,0,0,0.87);
