@@ -10,7 +10,7 @@
 }
 
 .node circle.unfilled {
-	fill: #f3f3f3 !important;		/* XXX */
+	fill: #f3f3f3 !important;		/* Used to take priority over fill colours set via JavaScript */
 }
 
 body, button {
