@@ -272,11 +272,7 @@ svg .notes.url {
 }
 
 /* Labels */
-.nonselectable {
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -webkit-touch-callout: none;
-    -o-user-select: none;
-    -moz-user-select: none;
+/* Make all node labels non-selectable, and prevent them being a barrier where they overlap nodes */
+.node-label {
+	pointer-events: none;
 }

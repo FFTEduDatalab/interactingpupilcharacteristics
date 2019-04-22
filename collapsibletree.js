@@ -379,12 +379,12 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		.on("click", toggleDescendants);	// passes details of node to click function
 
 	nodeEnter.append("text")		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
-		.attr("class", "nodeLabel")
+		.attr("class", "node-label")
 		.attr("data-depth", function(d) {				// text labels don't have d.depth, so data-depth is added so that depth can be accessed when working with text labels
 			return d.depth;
 		})
 		.text(function(d) {
-			return d.data.header[0].toUpperCase() + d.data.header.slice(1);		// svg css has no first-child pseudo-class, therefore best to do this way
+			return d.data.header[0].toUpperCase() + d.data.header.slice(1);		// svg css has no text-transform property, therefore best to do this way
 		})
 		.attr("x", function(d) {
 			if (d.data.position=='left') {
@@ -405,7 +405,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 		})
 		.style("fill-opacity", 1e-6);
 
-	var labels=document.getElementsByClassName("nodeLabel")
+	var labels=document.getElementsByClassName("node-label")
 
 	requiredSpacing={}
 
@@ -468,14 +468,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 				return 1;
 			}
 		})
-		.attr("class", function(d) {
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.data.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {
-				return "nodeLabel nonselectable";				// done in hacky fashion because classed wasn't working here
-			}
-			else {
-				return "nodeLabel";
-			}
-		});
+		.attr("class", "node-label");
 
 	var nodeExit=node.exit()
 		.transition()
