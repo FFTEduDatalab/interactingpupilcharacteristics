@@ -426,7 +426,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			requiredSpacing[label.getAttribute("data-depth")]=Math.ceil(label.getComputedTextLength()/5)*5;
 		}
 		else if ((Math.ceil(label.getComputedTextLength()/5)*5)>requiredSpacing[label.getAttribute("data-depth")]) {
-			requiredSpacing[label.getAttribute("data-depth")]=(Math.ceil(label.getComputedTextLength()/5)*5);
+			requiredSpacing[label.getAttribute("data-depth")]=Math.ceil(label.getComputedTextLength()/5)*5;
 		}
 	};
 
@@ -434,11 +434,19 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodes.forEach(function(d) {
 		nodes.forEach(function(e) {
-			if ((d.depth==e.depth && d.parent!=e.parent && d.data.position!=e.data.position) || (d.depth==e.depth && d.parent==e.parent && d.data.position==e.data.position && d.id!=e.id)) {		// if labels are positioned on the same side or they share a parent they won't crash into one another, unless a node has more than one sibling in which case they can
+			if (d.depth==e.depth && d.parent!=e.parent && d.data.position!=e.data.position) {
+				if (minSpacing[d.depth]==null) {
+					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x))/2;
+				}
+				else if (Math.round(Math.abs(d.x-e.x))/2<minSpacing[d.depth]) {
+					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x))/2;
+				}
+			}
+			else if (d.depth==e.depth && d.parent==e.parent && d.data.position==e.data.position && d.id!=e.id) {		// if labels are positioned on the same side and they share a parent they won't crash into one another, but could crash into the node itself
 				if (minSpacing[d.depth]==null) {
 					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
 				}
-				else if (Math.abs(d.x-e.x)<minSpacing[d.depth]) {
+				else if (Math.round(Math.abs(d.x-e.x))<minSpacing[d.depth]) {
 					minSpacing[d.depth]=Math.round(Math.abs(d.x-e.x));
 				}
 			}
@@ -473,7 +481,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodeUpdate.select("text")
 		.style("fill-opacity", function(d) {		// this changes the behaviour of nodeUpdate from what it started out as - meaning that for node text (only) it handles removal as well as addition
-			if (minSpacing[d.depth]<requiredSpacing[d.depth]*2 || (d.data.position=='left' && Math.ceil(d.x/5)*5-radiuses[d.depth]-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+radiuses[d.depth]+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
+			if (minSpacing[d.depth]-radiuses[d.depth]*2-8<requiredSpacing[d.depth] || (d.data.position=='left' && Math.ceil(d.x/5)*5-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
 				return 1e-6;
 			}
 			else {
