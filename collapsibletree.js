@@ -176,13 +176,18 @@ svg.append("text")
 
 svg.append("text")
 	.attr("class", "notes header")
-	.attr("y", height + margin.bottom - 40)
+	.attr("y", height + margin.bottom - 50)
 	.text("Notes");
 
 svg.append("text")
 	.attr("class", "notes")
+	.attr("y", height + margin.bottom - 40)
+	.text("Pupils in state-funded establishments. Pupils are excluded where their ethnicity, EAL or disadvantage status is not recorded in the spring census of Year 6/Year 11.");
+
+svg.append("text")
+	.attr("class", "notes")
 	.attr("y", height + margin.bottom - 30)
-	.text("Pupils in state-funded establishments. Coastal is defined as attending a school with 5.5km of the coast.");
+	.text("Pupils’ first language includes those for whom first language is believed to be English/other than English. Coastal is defined as attending a school with 5.5km of the coast.");
 
 svg.append("text")
 	.attr("class", "notes")
@@ -201,7 +206,7 @@ svg.append("a")
 	.attr("class", "notes url")
 	.attr("x", 312)
 	.attr("y", height + margin.bottom - 10)
-	.attr("href", "interactingpupilcharacteristics.xlsx")		// XXX
+	.attr("href", "interactingpupilcharacteristics.xlsx")
 	.text("Download the data");
 
 svg.append("a")
@@ -575,7 +580,7 @@ function diagonal(p, c) {
 
 function toggleDescendants(d) {
 	clickCount+=1
-	if (clickCount>=-1) {		// XXX
+	if (clickCount>=-1) {
 		svg.selectAll(".button").selectAll("*")
 			.attr("visibility","visible")
 	}
