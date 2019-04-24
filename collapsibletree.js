@@ -506,7 +506,12 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr("transform", function(d) {
-			return "translate(" + source.x + "," + source.y + ")";
+			if (source.x) {		// handles an error that only occurs when switching datasets and rapidly using expand all
+				return "translate(" + source.x + "," + source.y + ")";
+			}
+			else {
+				return "translate(" + root.x0 + "," + root.y0 + ")";
+			}
 		})
 		.remove();
 
@@ -558,8 +563,14 @@ function draw(source) {		// function to draw nodes and links - either used on th
 			}
 		})
 		.attr('d', function(d) {
-			var o = {x: source.x, y: source.y}		// position of the clicked node, whether or not that is the parent
-			return diagonal(o, o)
+			if (source.x) {		// handles an error that only occurs when switching datasets and rapidly using expand all
+				var o = {x: source.x, y: source.y}		// position of the clicked node, whether or not that is the parent
+				return diagonal(o, o);
+			}
+			else {
+				var o = {x: root.x0, y: root.y0}
+				return diagonal(o, o);
+			}
 		})
 		.remove();
 
