@@ -486,7 +486,7 @@ function draw(source) {		// function to draw nodes and links - either used on th
 
 	nodeUpdate.select("text")
 		.style("fill-opacity", function(d) {		// this changes the behaviour of nodeUpdate from what it started out as - meaning that for node text (only) it handles removal as well as addition
-			if (minSpacing[d.depth]-radiuses[d.depth]*2-8<requiredSpacing[d.depth] || (d.data.position=='left' && Math.ceil(d.x/5)*5-requiredSpacing[d.depth]<margin.left) || (d.depth==1 && d.data.position=='right' && Math.ceil(d.x/5)*5+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the first tier is at risk of crashing into something
+			if (minSpacing[d.depth]-radiuses[d.depth]*2-8<requiredSpacing[d.depth] || (d.data.position=='left' && Math.ceil(d.x/5)*5-requiredSpacing[d.depth]<margin.left) || (d.depth<3 && d.data.position=='right' && Math.ceil(d.x/5)*5+requiredSpacing[d.depth]>width)) {		// on the RHS, the wider margin means only the second and third tiers is at risk of crashing into something
 				return 1e-6;
 			}
 			else {
