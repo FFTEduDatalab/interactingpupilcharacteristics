@@ -1,3 +1,19 @@
+#post-16794 {		/* XXX */
+	max-width: none !important;
+	width: 1140px !important;
+}
+
+.vis .controls,
+.vis .controls * {
+	box-sizing: content-box;		/* Needed for embedding into our WordPress set-up */
+}
+
+.vis.ie {
+	font-style: italic;
+	color: white;
+	background-color: rgb(83,83,83);
+}
+
 .link {
 	fill: none;
 	stroke: grey;
@@ -13,7 +29,13 @@
 	fill: #f3f3f3 !important;		/* Used to take priority over fill colours set via JavaScript */
 }
 
-body, button {
+.vis {
+	width: 1140px;
+	height: 788px;
+}
+
+.vis *,
+.d3-tip {
 	font-size: 14px;
 	color: rgba(0,0,0,0.87);
 	font-family:
@@ -25,12 +47,8 @@ body, button {
 		Ubuntu,
 		Cantarell,
 		"Helvetica Neue",
-		sans-serif;
-}
-
-.vis {
-	width: 1140px;
-	height: 730px;
+		sans-serif !important;		/* Used to take priority over something specified as !important in CSS in WordPress */
+	letter-spacing: 0px;
 }
 
 svg {
@@ -89,9 +107,12 @@ svg .button text {
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
 .controls {
 	white-space: nowrap;
+	font-size: 0;		/* so that whitespace doesn't show between in-line divs */
+	line-height: normal;
 }
 
 .controls .switch-controls {
+	font-size: 14px;			/* can't use relative sizing, as font-size set to 0 on .controls  */
 	display: inline-block;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -202,16 +223,17 @@ svg .button text {
 	line-height: 0px;
 }
 
-.switch-controls .help-icon:hover .tooltip {
+.switch-controls .help-icon:hover .vis-tooltip {
 	visibility: visible;
 }
 
 .switch-controls .fa-question-circle {
 	color: #535353;
 	font-size: 20px;
-}
+	font-family: 'Font Awesome 5 Free' !important		/* Used to take priority over something specified as !important in CSS in WordPress */
+}		
 
-.tooltip {
+.vis-tooltip {
 	visibility: hidden;
 	background-color: #535353;
 	text-align: center;
@@ -226,11 +248,11 @@ svg .button text {
 	white-space: normal;
 }
 
-.tooltip #measure-description-text {
+.vis-tooltip #measure-description-text {
 	color: white;
 }
 
-.tooltip ::after {
+.vis-tooltip ::after {
 	content: "";
 	position: absolute;
 	top: 17px;

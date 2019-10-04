@@ -3,15 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 		<link rel="icon" href="data:,">
-	    <link href='styles.css' type='text/css' rel='stylesheet' media='screen,projection'/>
+	    <link rel='stylesheet' href='/wp-content/d3/201909_interactingpupilcharacteristics/styles.css' type='text/css' media='screen,projection'/>
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 	</head>
 	<body>
-		<noscript>This visualisation requires JavaScript, which is turned off in your browser.</noscript>
-		<script>
-			if (navigator.userAgent.search('Trident') !== -1)
-				document.write('<div>Sorry - this visualisation requires a more modern browser than Internet Explorer (e.g. Chrome, Safari, Firefox or Edge).</div>');
-		</script>
 		<div class="vis">
 			<div class="controls">
 				<div class="switch-controls" id="phase-controls">
@@ -19,21 +14,28 @@
 					<label for="phase_1">Primary</label>
 					<input type="radio" id="phase_2" name="phase-switch" value="secondary" onchange="updateControls(value)"/>
 					<label for="phase_2">Secondary</label>
-				</div><!--		whitespace commented out as divs are inline elements
-				--><div class="switch-controls" id="help-controls">
+				</div>
+				<div class="switch-controls" id="help-controls">
 					<span class="help-icon">
-						<div class="tooltip">
+						<div class="vis-tooltip">
 							<span id="measure-description-text"></span>
 						</div>
 						<i class="fas fa-question-circle"></i>
 					</span>
-				</div><!--		whitespace commented out as divs are inline elements
-				--><div class="switch-controls" id="measure-controls"></div>
+				</div>
+				<div class="switch-controls" id="measure-controls"></div>
 			</div>
 		</div>
-		<script src='https://d3js.org/d3.v5.min.js'></script>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js'></script>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
-		<script src='collapsibletree.js'></script>
+		<script src='https://d3js.org/d3.v5.min.js'></script><!--
+		--><script src='https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js'></script><!--
+		--><script src='https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script><!--
+		--><script src='/wp-content/d3/201909_interactingpupilcharacteristics/collapsibletree.js'></script><!--
+		--><script>
+			if (navigator.userAgent.search('Trident') !== -1) {
+				document.getElementsByClassName('vis')[0].innerHTML='Sorry - this visualisation requires a more modern browser than Internet Explorer (e.g. Chrome, Safari, Firefox or Edge).'
+				document.getElementsByClassName('vis')[0].className=document.getElementsByClassName('vis')[0].className + ' ie'
+			}
+		</script><!--
+		--><noscript>This visualisation requires JavaScript, which is turned off in your browser.</noscript>
 	</body>
 </html>
