@@ -324,7 +324,7 @@ function loadDataset (value) {
 			.attr('text-anchor', 'start')
 			.attr('x', 0)
 			.attr('y', -90)
-			.text('How pupil characteristics interact to influence education outcomes');
+			.text('How pupil characteristics influence education outcomes');
 
 		svg.append('text')
 			.attr('class', 'title')
