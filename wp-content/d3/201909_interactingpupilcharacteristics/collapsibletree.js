@@ -248,10 +248,23 @@ svg.append('a')
 svg.call(tip);		// invoke the tip in the context of viz
 
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-	mobileDevice=true
+	mobileDevice = true
+}
+
+if (mobileDevice === false) {
+	mobileDevice = window.matchMedia("only screen and (max-width: 760px)").matches;
 }
 
 function loadDataset (value) {
+
+	if (mobileDevice === true) {		// we want to preserve the 'expand all' state on desktop - reset 'next' state on mobile
+		clickCount = 0
+		svg.select('g#nextButton').selectAll('text')
+			.node().innerHTML = 'Next (gender)'		// select the element, rather than the D3 selection...
+		svg.selectAll('#nextButton').selectAll('*')
+			.attr('visibility', 'hidden')
+	}
+
 	var jsonFile = '/wp-content/d3/201909_interactingpupilcharacteristics/' + value + '.json';
 
 	d3.json(jsonFile).then(function (json) {
@@ -419,10 +432,11 @@ function draw (source) {		// function to draw nodes and links - either used on t
 		.on('mouseover', tip.show)
 		.on('mouseout', tip.hide)
 		.on('click', function (d) {
-			if (mobileDevice == false) {
+			if (mobileDevice === false) {
+				clickCount += 1;
 				toggleDescendants(d);
 			}
-			else if (mobileDevice == true && clickCount == 0) {		// included so that button isn't made visible again after all 'next's have been cycled through
+			else if (mobileDevice === true && clickCount == 0) {		// included so that button isn't made visible again after all 'next's have been cycled through
 				clickCount += 1;
 				svg.selectAll('#nextButton').selectAll('*')
 					.attr('visibility', 'visible');
@@ -616,8 +630,7 @@ function diagonal (p, c) {
 }
 
 function toggleDescendants (d) {
-	clickCount += 1;
-	if (clickCount >= -1 && mobileDevice == false) {		// XXX
+	if (clickCount >= -1 && mobileDevice === false) {		// XXX
 		svg.selectAll('#expandAllButton').selectAll('*')
 			.attr('visibility', 'visible');
 	}
