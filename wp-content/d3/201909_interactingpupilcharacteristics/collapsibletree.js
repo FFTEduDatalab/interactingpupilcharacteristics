@@ -153,12 +153,21 @@ svg.append('g')
 		expandAll();
 	});
 
+svg.select('g#expandAllButton')
+	.append('text')
+	.text('Expand all')
+	.attr('transform', 'translate(8,-13)')
+	.attr('visibility', 'hidden')
+	.on('click', function () {
+		expandAll();
+	});
+
 svg.append('g')
 	.attr('class', 'button')
 	.attr('id', 'nextButton')
 	.append('rect')
 	.attr('transform', 'translate(0,-30)')		// for alignment with the top of first node (r=30)
-	.attr('width', 80)
+	.attr('width', 140)
 	.attr('height', 23)
 	.attr('rx', 4)
 	.attr('ry', 4)
@@ -167,19 +176,13 @@ svg.append('g')
 		next();
 	});
 
-svg.select('g#expandAllButton')
-	.append('text')
-	.text('Expand all')
-	.attr('transform', 'translate(8,-13)')		// for alignment with the top of first node (r=30)
-	.attr('visibility', 'hidden')
-	.on('click', function () {
-		expandAll();
-	});
-
 svg.select('g#nextButton')
 	.append('text')
 	.text('Next (gender)')
-	.attr('transform', 'translate(8,-13)')		// for alignment with the top of first node (r=30)
+	.attr('x', 70)
+	.attr('y', -17)
+	.attr('dominant-baseline', 'middle')
+	.attr('text-anchor', 'middle')
 	.attr('visibility', 'hidden')
 	.on('click', function () {
 		next();
