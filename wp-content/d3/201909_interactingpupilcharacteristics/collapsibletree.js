@@ -10,7 +10,8 @@ var loaded = 0,
 	duration = 1250,
 	requiredSpacing = {},
 	minSpacing = {},
-	root;
+	root,
+	mobileDevice=false;
 
 var buckets = {
 	'ks2att': 7,
@@ -140,6 +141,7 @@ var legend = d3.legendColor()		// https://d3-legend.susielu.com/
 
 svg.append('g')
 	.attr('class', 'button')
+	.attr('id', 'expandAllButton')
 	.append('rect')
 	.attr('transform', 'translate(0,-30)')		// for alignment with the top of first node (r=30)
 	.attr('width', 80)
@@ -151,13 +153,36 @@ svg.append('g')
 		expandAll();
 	});
 
-svg.select('g.button')
+svg.append('g')
+	.attr('class', 'button')
+	.attr('id', 'nextButton')
+	.append('rect')
+	.attr('transform', 'translate(0,-30)')		// for alignment with the top of first node (r=30)
+	.attr('width', 80)
+	.attr('height', 23)
+	.attr('rx', 4)
+	.attr('ry', 4)
+	.attr('visibility', 'hidden')
+	.on('click', function () {
+		next();
+	});
+
+svg.select('g#expandAllButton')
 	.append('text')
 	.text('Expand all')
 	.attr('transform', 'translate(8,-13)')		// for alignment with the top of first node (r=30)
 	.attr('visibility', 'hidden')
 	.on('click', function () {
 		expandAll();
+	});
+
+svg.select('g#nextButton')
+	.append('text')
+	.text('Next (gender)')
+	.attr('transform', 'translate(8,-13)')		// for alignment with the top of first node (r=30)
+	.attr('visibility', 'hidden')
+	.on('click', function () {
+		next();
 	});
 
 svg.append('text')
@@ -191,7 +216,7 @@ svg.append('text')
 svg.append('text')
 	.attr('class', 'notes')
 	.attr('y', height + margin.bottom - 20)
-	.text('*Pupil subgroups are only shown when both subgroups consist of at least 10 pupils.');
+	.text('*Pupil subgroups are only shown when both subgroups consist of at least 11 pupils.');
 
 svg.append('text')
 	.attr('class', 'notes')
@@ -219,6 +244,10 @@ svg.append('a')
 
 svg.call(tip);		// invoke the tip in the context of viz
 
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	mobileDevice=true
+}
+
 function loadDataset (value) {
 	var jsonFile = '/wp-content/d3/201909_interactingpupilcharacteristics/' + value + '.json';
 
@@ -232,7 +261,8 @@ function loadDataset (value) {
 		}
 		else if (value == 'ks4att' || value == 'ks2readprog' || value == 'ks2writprog' || value == 'ks2matprog') {
 			legend.labelFormat(d3.format('.1f'));
-		} else {
+		}
+		else {
 			legend.labelFormat(d3.format('.2f'));
 		}
 
@@ -344,7 +374,7 @@ function loadDataset (value) {
 	});
 }
 
-function draw (source) {// function to draw nodes and links - either used on the entire dataset, or data relating to a particular node that has been clicked on
+function draw (source) {		// function to draw nodes and links - either used on the entire dataset, or data relating to a particular node that has been clicked on
 
 	if (loaded == 0) {		// start tree off collapsed
 		collapseDescendants(root);
@@ -385,7 +415,16 @@ function draw (source) {// function to draw nodes and links - either used on the
 		})
 		.on('mouseover', tip.show)
 		.on('mouseout', tip.hide)
-		.on('click', toggleDescendants);	// passes details of node to click function
+		.on('click', function (d) {
+			if (mobileDevice == false) {
+				toggleDescendants(d);
+			}
+			else if (mobileDevice == true && clickCount == 0) {		// included so that button isn't made visible again after all 'next's have been cycled through
+				clickCount += 1;
+				svg.selectAll('#nextButton').selectAll('*')
+					.attr('visibility', 'visible');
+			}
+		});
 
 	nodeEnter.append('text')		// add label text in each node g we have added. If a node has children, text is positioned to the left of the node, anchored at the end of the text; if a node has no children, text is positioned to the right of the node, anchored at the start of the text
 		.attr('class', 'node-label')
@@ -575,8 +614,8 @@ function diagonal (p, c) {
 
 function toggleDescendants (d) {
 	clickCount += 1;
-	if (clickCount >= -1) {		// XXX
-		svg.selectAll('.button').selectAll('*')
+	if (clickCount >= -1 && mobileDevice == false) {		// XXX
+		svg.selectAll('#expandAllButton').selectAll('*')
 			.attr('visibility', 'visible');
 	}
 	if (d.children) {
@@ -638,4 +677,43 @@ function expandAll () {
 	stashPosition(root);
 	expandDescendants(root);
 	clearPosition(root);
+}
+
+function next () {
+	stashPosition(root)
+	expandNextLevel(root)
+	if (svg.select('g#nextButton').selectAll('text').node().innerHTML == 'Next (gender)') {
+		toggleDescendants(root)		// needed as initially root doesn't have any descendants, so expandNextLevel would have no effect
+		svg.select('g#nextButton').selectAll('text')
+			.node().innerHTML = 'Next (disadvantage)'		// select the element, rather than the D3 selection...
+	}
+	else if (svg.select('g#nextButton').selectAll('text').node().innerHTML == 'Next (disadvantage)') {
+		svg.select('g#nextButton').selectAll('text')
+			.node().innerHTML = 'Next (ethnicity)'
+	}
+	else if (svg.select('g#nextButton').selectAll('text').node().innerHTML == 'Next (ethnicity)') {
+		svg.select('g#nextButton').selectAll('text')
+			.node().innerHTML = 'Next (EAL)'
+	}
+	else if (svg.select('g#nextButton').selectAll('text').node().innerHTML == 'Next (EAL)') {
+		svg.select('g#nextButton').selectAll('text')
+			.node().innerHTML = 'Next (coastal)'
+	}
+	else if (svg.select('g#nextButton').selectAll('text').node().innerHTML == 'Next (coastal)') {
+		svg.selectAll('#nextButton').selectAll('*')
+			.attr('visibility', 'hidden');
+	}
+}
+
+function expandNextLevel (inputLevel) {
+	if (inputLevel.children) {
+		for (let child of inputLevel.children) {
+			expandNextLevel(child)
+			if (child._children) {
+				child.children = child._children;
+				child._children = null;
+				draw(child);
+			}
+		}
+	}
 }
