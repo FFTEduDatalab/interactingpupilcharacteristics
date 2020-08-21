@@ -219,7 +219,7 @@ svg.append('text')
 svg.append('text')
 	.attr('class', 'notes')
 	.attr('y', height + margin.bottom - 20)
-	.text('*Pupil subgroups are only shown when both subgroups consist of at least 11 pupils.');
+	.text('*Pupil subgroups are only shown when both subgroups consist of at least 10 pupils.');
 
 svg.append('text')
 	.attr('class', 'notes')
