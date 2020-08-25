@@ -58,7 +58,7 @@ var helpTooltips = {
 	'ks2writprog': 'This metric measures the progress made by pupils in writing between the ages of seven and 11.',
 	'ks2matprog': 'This metric measures the progress made by pupils in maths between the ages of seven and 11.',
 	'ks4att': 'Attainment 8 is one of the government’s headline accountability measures for secondary schools. It measures pupils’ attainment across eight subjects.',
-	'ks4prog': 'Progress 8 is one of the government’s headline accountability measures for secondary schools. It measures the progress that pupils make between the ages of 11 and 16, comparing pupils’ attainment across eight subjects with that of other pupils who had the same attainment at age 11.',
+	'ks4prog': 'Progress 8 is one of the government’s headline accountability measures for secondary schools. It measures the progress that pupils make between the ages of 11 and 16, comparing pupils’ attainment across eight subjects with that of other pupils who had similar attainment at age 11.',
 	'ks4basics': 'Basics measures the proportion of pupils achieving a standard pass or better (grade 4+) in English and maths GCSEs.'
 };
 
@@ -370,7 +370,7 @@ function loadDataset (value) {
 			.attr('text-anchor', 'start')
 			.attr('x', 0)
 			.attr('y', -90)
-			.text('How pupil characteristics influence education outcomes');
+			.text('How pupil characteristics interact to influence education outcomes');
 
 		svg.append('text')
 			.attr('class', 'title')
