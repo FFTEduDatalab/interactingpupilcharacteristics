@@ -631,7 +631,7 @@ function diagonal (p, c) {
 }
 
 function toggleDescendants (d) {
-	if (clickCount >= -1 && mobileDevice === false) {		// XXX
+	if (clickCount >= 3 && mobileDevice === false) {
 		svg.selectAll('#expandAllButton').selectAll('*')
 			.attr('visibility', 'visible');
 	}
