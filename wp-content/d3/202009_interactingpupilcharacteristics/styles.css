@@ -133,8 +133,8 @@
 
 .controls .switch-controls {
 	font-size: 14px;			/* can't use relative sizing, as font-size set to 0 on .controls  */
-	padding-top: 10px;
-	padding-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	cursor: default;
 	user-select: none;
 	-webkit-user-select: none;
@@ -144,9 +144,15 @@
 	-moz-user-select: none;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 760px) {
 	.controls #help-controls {
 		float: right;
+	}
+}
+
+@media (max-width: 760px) {
+	.controls #help-controls {
+		margin-bottom: 15px;
 	}
 }
 
@@ -155,11 +161,9 @@
 }
 
 @media (min-width: 1140px) {
-
 	.controls {
 		display: flex;
 	}
-
 
 	.controls #phase-controls {
 		flex: 1 1 auto;
@@ -171,17 +175,20 @@
 		float: none;
 	}
 
-
 	.controls #measure-controls.prim {
 		text-align: right;
 	}
-
 
 	.controls #measure-controls.sec {
 		text-align: right;
 	}
 
+}
 
+@media (max-width: 1140px) {
+	.controls #help-controls {
+		margin-top: 2px !important;
+	}
 }
 
 
@@ -208,7 +215,7 @@
 	transition:         all 0.1s ease-in-out;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 760px) {
 	.switch-controls label {
 		display: inline-block;
 	}
@@ -224,7 +231,7 @@
 	box-shadow: none;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 760px) {
 	.switch-controls#phase-controls label:last-of-type,
 	.switch-controls#measure-controls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
 		border-radius: 0 4px 4px 0;
@@ -277,7 +284,7 @@
 	white-space: normal;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 760px) {
 	.vis-tooltip {
 		right: 0;
 		left: auto;
