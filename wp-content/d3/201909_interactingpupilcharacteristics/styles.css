@@ -26,7 +26,7 @@
 
 .vis {
 	width: 1140px;
-	height: 788px;
+	height: 740px;
 }
 
 .vis *,
@@ -46,18 +46,18 @@
 		letter-spacing: 0px;
 }
 
-svg {
+.vis svg {
 	background-color: #f3f3f3;
 }
 
-svg .button rect {
+.vis svg .button rect {
 	fill: #f3f3f3;
 	stroke: rgba(0, 0, 0, 0.2);
 	stroke-width:1px;
 	cursor: pointer;
 }
 
-svg .button text {
+.vis svg .button text {
 	fill: rgba(0,0,0,0.87);
 	cursor: pointer;
 }
@@ -71,12 +71,26 @@ svg .button text {
 	border-radius: 2px;
 	pointer-events: none;
 	width: 250px;
-    user-select: none;
+	user-select: none;
+	z-index: 11;
     -webkit-user-select: none;
     -ms-user-select: none;
     -webkit-touch-callout: none;
     -o-user-select: none;
     -moz-user-select: none;
+}
+
+@media (max-width: 1024px) {
+	.d3-tip {
+		position: fixed!important;
+		right: 0!important;
+		left: 0!important;
+		top: auto!important;
+		bottom: 0!important;
+		width: 100%!important;
+		z-index: 100001;
+		border-radius: 0;
+	}
 }
 
 .d3-tip b {
@@ -99,55 +113,77 @@ svg .button text {
 	margin: 0px;
 }
 
+.scroll-wrapper {
+	overflow-x: scroll;
+	background: #f3f3f3;
+}
+
+
 /* Buttons. Via https://codepen.io/JiveDig/pen/jbdJXR */
 .controls {
-	white-space: nowrap;
 	font-size: 0;		/* so that whitespace doesn't show between in-line divs */
 	line-height: normal;
 }
 
+@media (min-width: 640px) {
+	.controls {
+		white-space: nowrap;
+	}
+}
+
 .controls .switch-controls {
 	font-size: 14px;			/* can't use relative sizing, as font-size set to 0 on .controls  */
-	display: inline-block;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	cursor: default;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -webkit-touch-callout: none;
-    -o-user-select: none;
-    -moz-user-select: none;
+	user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-touch-callout: none;
+	-o-user-select: none;
+	-moz-user-select: none;
 }
 
-.controls #phase-controls {
-	width: 260px;
+@media (min-width: 640px) {
+	.controls #help-controls {
+		float: right;
+	}
 }
 
-.controls #help-controls {
-	vertical-align: top;
-	height: 34px;
+.scroll-wrapper {
+	clear: both;
 }
 
-.controls #help-controls.prim {
-	width: 360px;
+@media (min-width: 1140px) {
+
+	.controls {
+		display: flex;
+	}
+
+
+	.controls #phase-controls {
+		flex: 1 1 auto;
+	}
+
+	.controls #help-controls {
+		vertical-align: top;
+		text-align: right;
+		float: none;
+	}
+
+
+	.controls #measure-controls.prim {
+		text-align: right;
+	}
+
+
+	.controls #measure-controls.sec {
+		text-align: right;
+	}
+
+
 }
 
-.controls #help-controls.sec {
-	width: 490px;
-}
-
-.controls #measure-controls.prim {
-	text-align: right;
-}
-
-.controls #measure-controls.prim {
-	width: 520px;
-}
-
-.controls #measure-controls.sec {
-	width: 390px;
-}
 
 .switch-controls input {
     position: absolute !important;
@@ -159,8 +195,8 @@ svg .button text {
 }
 
 .switch-controls label {
-	width: 100px;
-	height: 20px;
+	display: block;
+	width: 140px;
 	background-color: #f3f3f3;
 	text-align: center;
 	padding: 6px 14px;
@@ -172,12 +208,10 @@ svg .button text {
 	transition:         all 0.1s ease-in-out;
 }
 
-.controls #phase-controls label {
-	float: left;
-}
-
-.controls #measure-controls label {
-	float: right;
+@media (min-width: 640px) {
+	.switch-controls label {
+		display: inline-block;
+	}
 }
 
 .switch-controls label:hover {
@@ -190,32 +224,32 @@ svg .button text {
 	box-shadow: none;
 }
 
-.switch-controls#phase-controls label:first-of-type,
-.switch-controls#measure-controls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
-	border-radius: 4px 0 0 4px;
+@media (min-width: 640px) {
+	.switch-controls#phase-controls label:last-of-type,
+	.switch-controls#measure-controls label:last-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
+		border-radius: 0 4px 4px 0;
+	}
+
+	.switch-controls#phase-controls label:first-of-type,
+	.switch-controls#measure-controls label:first-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
+		border-radius: 4px 0 0 4px;
+	}
 }
 
-.switch-controls#phase-controls label:last-of-type,
-.switch-controls#measure-controls label:first-of-type {		/* handles the fact that the order of the measure controls is the reverse of what it appears to be */
-	border-radius: 0 4px 4px 0;
+.switch-controls#phase-controls label,
+.switch-controls#measure-controls label {
+	/* margin-right: -5px; */
 }
 
 .switch-controls .help-icon {		/* for text alignment with input labels */
 	position: relative;
-	top: 10px;
+	margin-right: 10px;
 	cursor: pointer;
+	top: 6px;
 }
 
-.switch-controls.prim .help-icon {
-	left: 330px;
-}
-
-.switch-controls.sec .help-icon {
-	left: 460px;
-}
-
-.switch-controls .help-icon i {
-	line-height: 0px;
+.switch-controls br {
+	display: none;
 }
 
 .switch-controls .help-icon:hover .vis-tooltip {
@@ -238,9 +272,16 @@ svg .button text {
 	position: absolute;
 	z-index: 1;
 	top: -10px;
-	right: 24px;
+	left: 0;
 	cursor: default;
 	white-space: normal;
+}
+
+@media (min-width: 640px) {
+	.vis-tooltip {
+		right: 0;
+		left: auto;
+	}
 }
 
 .vis-tooltip #measure-description-text {
@@ -256,6 +297,7 @@ svg .button text {
 	border-width: 5px;
 	border-style: solid;
 	border-color: transparent transparent transparent #535353;
+	display: none;
 }
 
 /* SVG text*/
@@ -278,24 +320,24 @@ svg .button text {
     -moz-user-select: none;
 }
 
-svg .title {
+.vis svg .title {
 	font-weight: bolder;
 	font-size: 1em;
 }
 
-svg .title.header {
+.vis svg .title.header {
 	font-size: 1.5em;
 }
 
-svg .notes {
+.vis svg .notes {
 	font-size: 10px;
 }
 
-svg .notes.header {
+.vis svg .notes.header {
 	text-decoration: underline;
 }
 
-svg .notes.url {
+.vis svg .notes.url {
 	fill: rgb(230,0,126);
 	text-decoration: underline;
 }

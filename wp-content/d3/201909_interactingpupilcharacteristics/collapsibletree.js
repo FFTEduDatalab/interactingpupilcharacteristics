@@ -11,7 +11,7 @@ var loaded = 0,
 	requiredSpacing = {},
 	minSpacing = {},
 	root,
-	mobileDevice=false;
+	mobileDevice = false;
 
 var buckets = {
 	'ks2att': 7,
@@ -63,22 +63,23 @@ var helpTooltips = {
 };
 
 var prim =
-'<input type="radio" id="measure_4" name="measure-switch" value="ks2matprog" onchange="loadDataset(value)"/>\
-	<label for="measure_4">Maths progress</label>\
-	<input type="radio" id="measure_3" name="measure-switch" value="ks2writprog" onchange="loadDataset(value)"/>\
-	<label for="measure_3">Writing progress</label>\
-	<input type="radio" id="measure_2" name="measure-switch" value="ks2readprog" onchange="loadDataset(value)"/>\
-	<label for="measure_2">Reading progress</label>\
-	<input type="radio" id="measure_1" name="measure-switch" value="ks2att" onchange="loadDataset(value)" checked/>\
-	<label for="measure_1">RWM attainment</label>';
+'<input type="radio" id="measure_1" name="measure-switch" value="ks2att" onchange="loadDataset(value)" checked/><!--\
+ --><label for="measure_1">RWM attainment</label><!--\
+ --><input type="radio" id="measure_2" name="measure-switch" value="ks2readprog" onchange="loadDataset(value)"/><!--\
+ --><label for="measure_2">Reading progress</label><!--\
+ --><input type="radio" id="measure_3" name="measure-switch" value="ks2writprog" onchange="loadDataset(value)"/><!--\
+ --><label for="measure_3">Writing progress</label><!--\
+ --><input type="radio" id="measure_4" name="measure-switch" value="ks2matprog" onchange="loadDataset(value)"/><!--\
+ --><label for="measure_4">Maths progress</label>';
 
 var sec =
-'<input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/>\
-	<label for="measure_3">Progress 8</label>\
-	<input type="radio" id="measure_2" name="measure-switch" value="ks4att" onchange="loadDataset(value)"/>\
-	<label for="measure_2">Attainment 8</label>\
-	<input type="radio" id="measure_1" name="measure-switch" value="ks4basics" onchange="loadDataset(value)" checked/>\
-	<label for="measure_1">Basics</label>';
+'<input type="radio" id="measure_1" name="measure-switch" value="ks4basics" onchange="loadDataset(value)" checked/><!--\
+ --><label for="measure_1">Basics</label><!--\
+ --><input type="radio" id="measure_2" name="measure-switch" value="ks4att" onchange="loadDataset(value)"/><!--\
+ --><label for="measure_2">Attainment 8</label><!--\
+ --><input type="radio" id="measure_3" name="measure-switch" value="ks4prog" onchange="loadDataset(value)"/><!--\
+ --><label for="measure_3">Progress 8</label>';
+
 
 function updateControls (value) {
 	if (value == 'primary') {
@@ -203,27 +204,27 @@ svg.append('text')
 
 svg.append('text')
 	.attr('class', 'notes header')
-	.attr('y', height + margin.bottom - 50)
+	.attr('y', height + margin.bottom - 40)
 	.text('Notes');
 
 svg.append('text')
 	.attr('class', 'notes')
-	.attr('y', height + margin.bottom - 40)
+	.attr('y', height + margin.bottom - 30)
 	.text('Pupils in state-funded establishments. Pupils are excluded where their ethnicity, EAL or disadvantage status is not recorded in the spring census of Year 6/Year 11.');
 
 svg.append('text')
 	.attr('class', 'notes')
-	.attr('y', height + margin.bottom - 30)
+	.attr('y', height + margin.bottom - 20)
 	.text('Pupils’ first language includes those for whom first language is believed to be English/other than English. Coastal is defined as attending a school with 5.5km of the coast.');
 
 svg.append('text')
 	.attr('class', 'notes')
-	.attr('y', height + margin.bottom - 20)
+	.attr('y', height + margin.bottom - 10)
 	.text('*Pupil subgroups are only shown when both subgroups consist of at least 10 pupils.');
 
 svg.append('text')
 	.attr('class', 'notes')
-	.attr('y', height + margin.bottom - 10)
+	.attr('y', height + margin.bottom)
 	.text('Source: FFT Education Datalab analysis of the National Pupil Database.');
 
 svg.append('a')
@@ -232,7 +233,7 @@ svg.append('a')
 	.append('text')
 	.attr('class', 'notes url')
 	.attr('x', 312)
-	.attr('y', height + margin.bottom - 10)
+	.attr('y', height + margin.bottom)
 	.attr('href', 'interactingpupilcharacteristics.xlsx')
 	.text('Download the data');
 
@@ -241,7 +242,7 @@ svg.append('a')
 	.append('image')
 	.attr('href', '/wp-content/d3/fft_education_datalab_logo_lo.png')
 	.attr('x', width + margin.right - 180 - 20)
-	.attr('y', height + margin.bottom - 45 - 10)
+	.attr('y', height + margin.bottom - 45)
 	.attr('height', '45px')
 	.attr('width', '180px');
 
