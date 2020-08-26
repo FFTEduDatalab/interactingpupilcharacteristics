@@ -228,7 +228,7 @@ svg.append('text')
 	.text('Source: FFT Education Datalab analysis of the National Pupil Database.');
 
 svg.append('a')
-	.attr('href', '/wp-content/d3/201909_interactingpupilcharacteristics/interactingpupilcharacteristics.xlsx')
+	.attr('href', '/wp-content/d3/202009_interactingpupilcharacteristics/interactingpupilcharacteristics.xlsx')
 	.attr('target', 'blank')			// fends off error relating to downloading
 	.append('text')
 	.attr('class', 'notes url')
@@ -266,7 +266,7 @@ function loadDataset (value) {
 			.attr('visibility', 'hidden')
 	}
 
-	var jsonFile = '/wp-content/d3/201909_interactingpupilcharacteristics/' + value + '.json';
+	var jsonFile = '/wp-content/d3/202009_interactingpupilcharacteristics/' + value + '.json';
 
 	d3.json(jsonFile).then(function (json) {
 		bucketWidth = bucketWidths[value];
