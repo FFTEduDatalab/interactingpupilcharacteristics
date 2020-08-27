@@ -224,15 +224,18 @@ svg.append('text')
 
 svg.append('text')
 	.attr('class', 'notes')
+	.attr('id', 'source')
 	.attr('y', height + margin.bottom)
 	.text('Source: FFT Education Datalab analysis of the National Pupil Database.');
+
+var downloadTextX = d3.select('#source').node().getBBox().width + 2
 
 svg.append('a')
 	.attr('href', '/wp-content/d3/202009_interactingpupilcharacteristics/interactingpupilcharacteristics.xlsx')
 	.attr('target', 'blank')			// fends off error relating to downloading
 	.append('text')
 	.attr('class', 'notes url')
-	.attr('x', 312)
+	.attr('x', downloadTextX)
 	.attr('y', height + margin.bottom)
 	.attr('href', 'interactingpupilcharacteristics.xlsx')
 	.text('Download the data');
