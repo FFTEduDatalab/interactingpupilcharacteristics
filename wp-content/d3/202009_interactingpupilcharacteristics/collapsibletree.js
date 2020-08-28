@@ -259,6 +259,18 @@ if (mobileDevice === false) {
 	mobileDevice = window.matchMedia("only screen and (max-width: 760px)").matches;
 }
 
+jQuery(function ($) {
+
+    $('#phase_1').change(function() {
+		updateControls('primary')
+    });
+
+    $('#phase_2').change(function() {
+		updateControls('secondary')
+    });
+
+});
+
 function loadDataset (value) {
 
 	if (mobileDevice === true) {		// we want to preserve the 'expand all' state on desktop - reset 'next' state on mobile
