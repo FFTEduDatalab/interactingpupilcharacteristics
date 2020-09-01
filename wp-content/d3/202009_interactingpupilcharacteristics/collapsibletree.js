@@ -281,7 +281,7 @@ function loadDataset (value) {
 			.attr('visibility', 'hidden')
 	}
 
-	var jsonFile = '/wp-content/d3/202009_interactingpupilcharacteristics/' + value + '.json';
+	var jsonFile = '/wp-content/d3/202009_interactingpupilcharacteristics/' + value + '.json?v=1.0.1';
 
 	d3.json(jsonFile).then(function (json) {
 		bucketWidth = bucketWidths[value];
