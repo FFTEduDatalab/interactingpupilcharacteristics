@@ -14,22 +14,22 @@ var loaded = 0,
 	mobileDevice = false;
 
 var buckets = {
-	'ks2att': 7,
+	'ks2att': 6,
 	'ks2readprog': 5,
 	'ks2writprog': 6,
-	'ks2matprog': 9,
+	'ks2matprog': 5,
 	'ks4basics': 7,
-	'ks4att': 5,
-	'ks4prog': 6
+	'ks4att': 8,
+	'ks4prog': 5
 };
 
 var bucketWidths = {
 	'ks2att': 0.1,
 	'ks2readprog': 1,
 	'ks2writprog': 1,
-	'ks2matprog': 1,
+	'ks2matprog': 2,
 	'ks4basics': 0.1,
-	'ks4att': 10,
+	'ks4att': 5,
 	'ks4prog': 0.5
 };
 
